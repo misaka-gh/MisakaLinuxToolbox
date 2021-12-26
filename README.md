@@ -18,6 +18,8 @@ Ver 1.1: 添加BBR及宝塔开心版、Docker安装脚本
 wget -N https://cdn.jsdelivr.net/gh/Misaka-blog/MisakaLinuxToolbox/toolbox.sh && chmod -R 777 toolbox.sh && bash toolbox.sh
 ```
 
+[刷新脚本](https://purge.jsdelivr.net/gh/Misaka-blog/MisakaLinuxToolbox/toolbox.sh)
+
 ## 赞助我们
 
 ![afdian-MisakaNo.jpg](https://s2.loli.net/2021/12/25/SimocqwhVg89NQJ.jpg)
