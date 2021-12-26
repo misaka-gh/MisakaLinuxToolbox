@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # 一些全局变量
-ver="1.3"
-changeLog="添加可乐的ServerStatus-Horatu探针管理及客户端"
+ver="1.4"
+changeLog="添加修改主机名，以及修改一些小问题"
 
 green(){
     echo -e "\033[32m\033[01m$1\033[0m"
@@ -32,7 +32,7 @@ elif cat /proc/version | grep -q -E -i "centos|red hat|redhat"; then
 release="Centos"
 else 
 red "不支持你当前系统，请使用Ubuntu,Debian,Centos系统"
-rm -f root.sh
+rm -f toolbox.sh
 exit 1
 fi
 
@@ -157,6 +157,12 @@ function serverstatusClient(){
     bash status.sh c
 }
 
+function changehostname(){
+    read -p "您的新主机名:" newhostname
+    hostnamectl set-hostname $newhostname
+    green "修改完成，请重新连接ssh或重新启动服务器!"
+}
+
 function start_menu(){
     clear
     red "============================"
@@ -180,6 +186,7 @@ function start_menu(){
     echo "7. 一键安装docker"
     echo "8. 流媒体解锁测试"
     echo "9. VPS三网测速"
+    echo "10. 修改主机名"
     echo "0. 退出脚本"
     echo "                            "
     read -p "请输入选项的数字:" menuNumberInput
@@ -193,6 +200,7 @@ function start_menu(){
         7 ) docker ;;
         8 ) mediaUnblockTest ;;
         9 ) vpsSpeedTest ;;
+        10 ) changehostname ;;
         0 ) exit 0;;
     esac
 }
