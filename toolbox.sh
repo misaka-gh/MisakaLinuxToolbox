@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # 一些全局变量
-ver="1.2"
-changeLog="添加流媒体检测，三网测速脚本"
+ver="1.3"
+changeLog="添加可乐的ServerStatus-Horatu探针管理及客户端"
 
 green(){
     echo -e "\033[32m\033[01m$1\033[0m"
@@ -133,6 +133,28 @@ function mediaUnblockTest(){
 
 function vpsSpeedTest(){
     bash <(curl -sSL "https://github.com/CoiaPrant/Speedtest/raw/main/speedtest-multi.sh")
+}
+
+function serverstatus(){
+    wget -N https://raw.githubusercontent.com/cokemine/ServerStatus-Hotaru/master/status.sh
+    echo "请选择你需要安装的客户端类型"
+    echo "1. 服务端"
+    echo "2. 监控端"
+    echo "0. 返回主页"
+    read -p "请输入选项的数字:" menuNumberInput1
+    case "$menuNumberInput1" in     
+        1 ) serverstatusServer;;
+        2 ) serverstatusClient;;
+        0 ) start_menu;;
+    esac
+}
+
+function serverstatusServer(){
+    bash status.sh s
+}
+
+function serverstatusClient(){
+    bash status.sh c
 }
 
 function start_menu(){
