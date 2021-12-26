@@ -8,6 +8,8 @@
 
 ## 来自姐姐大人的更新日志
 
+Ver 1.3: 添加可乐的ServerStatus-Horatu探针管理及客户端
+
 Ver 1.2: 添加流媒体检测，三网测速脚本
 
 Ver 1.1: 添加BBR及宝塔开心版、Docker安装脚本
