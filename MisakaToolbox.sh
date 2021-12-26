@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # 一些全局变量
-ver="1.4.1"
-changeLog="关于加了探针却没加到菜单的一个小bug的修复"
+ver="1.4.2"
+changeLog="更新脚本，修复jsdelivr无法解析问题"
 
 green(){
     echo -e "\033[32m\033[01m$1\033[0m"
@@ -32,7 +32,7 @@ elif cat /proc/version | grep -q -E -i "centos|red hat|redhat"; then
 release="Centos"
 else 
 red "不支持你当前系统，请使用Ubuntu,Debian,Centos系统"
-rm -f toolbox.sh
+rm -f MisakaToolbox.sh
 exit 1
 fi
 
@@ -95,7 +95,7 @@ function bthappy(){
     echo "1. 专业版"
     echo "2. 企业版"
     echo "0. 返回主页"
-    read -p "请输入选项的数字:" menuNumberInput1
+    read -p "请输入选项:" menuNumberInput1
     case "$menuNumberInput1" in     
         1 ) bthappypro;;
         2 ) bthappyent;;
@@ -141,7 +141,7 @@ function serverstatus(){
     echo "1. 服务端"
     echo "2. 监控端"
     echo "0. 返回主页"
-    read -p "请输入选项的数字:" menuNumberInput1
+    read -p "请输入选项:" menuNumberInput1
     case "$menuNumberInput1" in     
         1 ) serverstatusServer;;
         2 ) serverstatusClient;;
@@ -161,6 +161,10 @@ function changehostname(){
     read -p "您的新主机名:" newhostname
     hostnamectl set-hostname $newhostname
     green "修改完成，请重新连接ssh或重新启动服务器!"
+}
+
+function updateScript(){
+    wget -N https://cdn.jsdelivr.net/gh/Misaka-blog/MisakaLinuxToolbox@master/MisakaToolbox.sh chmod -R 777 MisakaToolbox.sh && bash MisakaToolbox.sh
 }
 
 function start_menu(){
@@ -188,9 +192,10 @@ function start_menu(){
     echo "9. VPS三网测速"
     echo "10. 修改主机名"
     echo "11. 安装可乐大佬的ServerStatus-Horatu探针"
+    echo "v. 更新脚本"
     echo "0. 退出脚本"
     echo "                            "
-    read -p "请输入选项的数字:" menuNumberInput
+    read -p "请输入选项:" menuNumberInput
     case "$menuNumberInput" in     
         1 ) rootLogin;;
         2 ) warp;;
@@ -203,6 +208,7 @@ function start_menu(){
         9 ) vpsSpeedTest ;;
         10 ) changehostname ;;
         11 ) serverstatus ;;
+        v ) updateScript ;;
         0 ) exit 0;;
     esac
 }
