@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # 一些全局变量
-ver="1.4.2"
-changeLog="更新脚本，修复jsdelivr无法解析问题"
+ver="1.4.3"
+changeLog="更新hijk大佬的v2脚本，支持IBM LinuxONE s390x的机器搭建节点"
 
 green(){
     echo -e "\033[32m\033[01m$1\033[0m"
@@ -163,6 +163,10 @@ function changehostname(){
     green "修改完成，请重新连接ssh或重新启动服务器!"
 }
 
+function hijk(){
+    bash <(curl -sL https://raw.githubusercontent.com/Misaka-blog/hijk-backup/master/xray.sh)
+}
+
 function updateScript(){
     wget -N https://cdn.jsdelivr.net/gh/Misaka-blog/MisakaLinuxToolbox@master/MisakaToolbox.sh && chmod -R 777 MisakaToolbox.sh && bash MisakaToolbox.sh
 }
@@ -192,6 +196,7 @@ function start_menu(){
     echo "9. VPS三网测速"
     echo "10. 修改主机名"
     echo "11. 安装可乐大佬的ServerStatus-Horatu探针"
+    echo "12. hijk大佬的v2脚本，支持IBM LinuxONE s390x的机器搭建节点"
     echo "v. 更新脚本"
     echo "0. 退出脚本"
     echo "                            "
@@ -208,6 +213,7 @@ function start_menu(){
         9 ) vpsSpeedTest ;;
         10 ) changehostname ;;
         11 ) serverstatus ;;
+        12 ) hijk ;; 
         v ) updateScript ;;
         0 ) exit 0;;
     esac
