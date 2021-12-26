@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # 一些全局变量
-ver="1.1"
-changeLog="添加BBR及宝塔开心版、Docker安装脚本"
+ver="1.2"
+changeLog="添加流媒体检测，三网测速脚本"
 
 green(){
     echo -e "\033[32m\033[01m$1\033[0m"
@@ -127,6 +127,14 @@ function docker(){
     curl -fsSL https://get.docker.com | bash -s docker --mirror Aliyun
 }
 
+function mediaUnblockTest(){
+    bash <(curl -sSL "https://github.com/CoiaPrant/MediaUnlock_Test/raw/main/check.sh")
+}
+
+function vpsSpeedTest(){
+    bash <(curl -sSL "https://github.com/CoiaPrant/Speedtest/raw/main/speedtest-multi.sh")
+}
+
 function start_menu(){
     clear
     red "============================"
@@ -148,6 +156,8 @@ function start_menu(){
     echo "5. 一键开启BBR"
     echo "6. 安装宝塔开心版"
     echo "7. 一键安装docker"
+    echo "8. 流媒体解锁测试"
+    echo "9. VPS三网测速"
     echo "0. 退出脚本"
     echo "                            "
     read -p "请输入选项的数字:" menuNumberInput
@@ -159,6 +169,8 @@ function start_menu(){
         5 ) bbr ;;
         6 ) bthappy ;;
         7 ) docker ;;
+        8 ) mediaUnblockTest ;;
+        9 ) vpsSpeedTest ;;
         0 ) exit 0;;
     esac
 }
