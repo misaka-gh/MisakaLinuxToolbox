@@ -6,6 +6,10 @@
 
 ![image.png](https://s2.loli.net/2021/12/26/WkiwbdExvnGAXCh.png)
 
+## 来自姐姐大人的更新日志
+
+Ver 1.1: 添加BBR及宝塔开心版、Docker安装脚本
+
 ## 使用方法
 
 ```shell
