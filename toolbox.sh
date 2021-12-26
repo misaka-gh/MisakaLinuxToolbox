@@ -1,7 +1,8 @@
 #!/bin/bash
 
 # 一些全局变量
-ver="1.0"
+ver="1.1"
+changeLog="添加BBR及宝塔开心版、Docker安装脚本"
 
 green(){
     echo -e "\033[32m\033[01m$1\033[0m"
@@ -84,6 +85,48 @@ function macka(){
     wget -P /root -N --no-check-certificate "https://raw.githubusercontent.com/mack-a/v2ray-agent/master/install.sh" && chmod 700 /root/install.sh && /root/install.sh
 }
 
+function bbr(){
+    wget -N --no-check-certificate "https://raw.githubusercontent.com/chiakge/Linux-NetSpeed/master/tcp.sh" && chmod +x tcp.sh && ./tcp.sh
+}
+
+function bthappy(){
+    echo "                   "
+    echo "请选择你需要安装的版本"
+    echo "1. 专业版"
+    echo "2. 企业版"
+    echo "0. 返回主页"
+    read -p "请输入选项的数字:" menuNumberInput1
+    case "$menuNumberInput1" in     
+        1 ) bthappypro;;
+        2 ) bthappyent;;
+        0 ) start_menu;;
+    esac
+}
+
+function bthappyent(){
+    if [ $release = "Centos" ]; then
+        yum install -y wget && wget -O install.sh http://download.moetas.com/ltd/install/install_6.0.sh && sh install.sh
+    elif [ $release = "Debian" ]; then
+        wget -O install.sh http://download.moetas.com/ltd/install/install-ubuntu_6.0.sh && bash install.sh
+    else
+        wget -O install.sh http://download.moetas.com/ltd/install/install-ubuntu_6.0.sh && sudo bash install.sh
+    fi
+}
+
+function bthappypro(){
+    if [ $release = "Centos" ]; then
+        yum install -y wget && wget -O install.sh http://download.moetas.com/install/install_6.0.sh && sh install.sh
+    elif [ $release = "Debian" ]; then
+        wget -O install.sh http://download.moetas.com/install/install-ubuntu_6.0.sh && bash install.sh
+    else
+        wget -O install.sh http://download.moetas.com/install/install-ubuntu_6.0.sh && sudo bash install.sh
+    fi
+}
+
+function docker(){
+    curl -fsSL https://get.docker.com | bash -s docker --mirror Aliyun
+}
+
 function start_menu(){
     clear
     red "============================"
@@ -95,19 +138,27 @@ function start_menu(){
     red "============================"
     echo "                            "
     green "检测到您当前运行的工具箱版本是：$ver"
+    green "更新日志：$changeLog"
     echo "                            "
+    echo "下面是我们提供的一些功能"
     echo "1. VPS修改登录方式为root密码登录"
     echo "2. VPS安装warp"
     echo "3. X-ui面板安装"
     echo "4. Mack-a 节点配置脚本"
+    echo "5. 一键开启BBR"
+    echo "6. 安装宝塔开心版"
+    echo "7. 一键安装docker"
     echo "0. 退出脚本"
     echo "                            "
-    read -p "请输入数字:" menuNumberInput
+    read -p "请输入选项的数字:" menuNumberInput
     case "$menuNumberInput" in     
         1 ) rootLogin;;
         2 ) warp;;
         3 ) xui ;;
         4 ) macka ;;
+        5 ) bbr ;;
+        6 ) bthappy ;;
+        7 ) docker ;;
         0 ) exit 0;;
     esac
 }
