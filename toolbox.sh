@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # 一些全局变量
-ver="1.4"
-changeLog="添加修改主机名，以及修改一些小问题"
+ver="1.4.1"
+changeLog="关于加了探针却没加到菜单的一个小bug的修复"
 
 green(){
     echo -e "\033[32m\033[01m$1\033[0m"
@@ -187,6 +187,7 @@ function start_menu(){
     echo "8. 流媒体解锁测试"
     echo "9. VPS三网测速"
     echo "10. 修改主机名"
+    echo "11. 安装可乐大佬的ServerStatus-Horatu探针"
     echo "0. 退出脚本"
     echo "                            "
     read -p "请输入选项的数字:" menuNumberInput
@@ -201,6 +202,7 @@ function start_menu(){
         8 ) mediaUnblockTest ;;
         9 ) vpsSpeedTest ;;
         10 ) changehostname ;;
+        11 ) serverstatus ;;
         0 ) exit 0;;
     esac
 }
