@@ -1,8 +1,11 @@
 #!/bin/bash
 
 # 一些全局变量
-ver="1.4.3"
-changeLog="更新hijk大佬的v2脚本，支持IBM LinuxONE s390x的机器搭建节点"
+ver="1.4.4"
+changeLog="在主菜单提示VPS信息，并新增部署Telegram MTProxy脚本"
+arch=`uname -m`
+virt=`systemd-detect-virt`
+kernelVer=`uname -r`
 
 green(){
     echo -e "\033[32m\033[01m$1\033[0m"
@@ -31,13 +34,13 @@ release="Ubuntu"
 elif cat /proc/version | grep -q -E -i "centos|red hat|redhat"; then
 release="Centos"
 else 
-red "不支持你当前系统，请使用Ubuntu,Debian,Centos系统"
+red "不支持你当前系统，请使用Ubuntu、Debian、Centos的主流系统"
 rm -f MisakaToolbox.sh
 exit 1
 fi
 
 if ! type curl >/dev/null 2>&1; then 
-yellow "检测到curl未安装，安装中 "
+yellow "curl未安装，安装中"
 if [ $release = "Centos" ]; then
 yum -y update && yum install curl -y
 else
@@ -48,7 +51,7 @@ green "curl已安装"
 fi
 
 if ! type wget >/dev/null 2>&1; then 
-yellow "检测到wget未安装，安装中 "
+yellow "wget未安装，安装中"
 if [ $release = "Centos" ]; then
 yum -y update && yum install wget -y
 else
@@ -59,7 +62,7 @@ green "wget已安装"
 fi
 
 if ! type sudo >/dev/null 2>&1; then 
-yellow "检测到sudo未安装，安装中 "
+yellow "sudo未安装，安装中"
 if [ $release = "Centos" ]; then
 yum -y update && yum install sudo -y
 else
@@ -171,6 +174,12 @@ function updateScript(){
     wget -N https://cdn.jsdelivr.net/gh/Misaka-blog/MisakaLinuxToolbox@master/MisakaToolbox.sh && chmod -R 777 MisakaToolbox.sh && bash MisakaToolbox.sh
 }
 
+function tgMTProxy(){
+    mkdir /home/mtproxy && cd /home/mtproxy
+    curl -s -o mtproxy.sh https://raw.githubusercontent.com/sunpma/mtp/master/mtproxy.sh && chmod +x mtproxy.sh && bash mtproxy.sh
+    bash mtproxy.sh start
+}
+
 function start_menu(){
     clear
     red "============================"
@@ -183,6 +192,12 @@ function start_menu(){
     echo "                            "
     green "检测到您当前运行的工具箱版本是：$ver"
     green "更新日志：$changeLog"
+    echo "                            "
+    yellow "检测到VPS信息如下"
+    yellow "处理器架构：$arch"
+    yellow "虚拟化架构：$virt"
+    yellow "操作系统：$release"
+    yellow "内核版本：$kernelVer"
     echo "                            "
     echo "下面是我们提供的一些功能"
     echo "1. VPS修改登录方式为root密码登录"
@@ -197,6 +212,7 @@ function start_menu(){
     echo "10. 修改主机名"
     echo "11. 安装可乐大佬的ServerStatus-Horatu探针"
     echo "12. hijk大佬的v2脚本，支持IBM LinuxONE s390x的机器搭建节点"
+    echo "13. 一键安装 Telegram MTProxy 代理服务器"
     echo "v. 更新脚本"
     echo "0. 退出脚本"
     echo "                            "
@@ -214,6 +230,7 @@ function start_menu(){
         10 ) changehostname ;;
         11 ) serverstatus ;;
         12 ) hijk ;; 
+        13 ) tgMTProxy ;;
         v ) updateScript ;;
         0 ) exit 0;;
     esac
