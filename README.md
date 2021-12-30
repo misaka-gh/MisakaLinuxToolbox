@@ -8,6 +8,8 @@
 
 ## 来自姐姐大人的更新日志
 
+Ver 1.4.4 在主菜单提示VPS信息，并新增部署Telegram MTProxy脚本
+
 Ver 1.4.3 更新hijk大佬的v2脚本，支持IBM LinuxONE s390x的机器搭建节点
 
 Ver 1.4.2 更新脚本，修复jsdelivr无法解析问题
