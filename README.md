@@ -29,6 +29,8 @@ wget -N https://cdn.jsdelivr.net/gh/Misaka-blog/MisakaLinuxToolbox@master/Misaka
 
 ## 来自姐姐大人的更新日志
 
+Ver 2.0.1 新增一些VPS测试脚本
+
 Ver 2.0 重构脚本，详细内容可看Github项目的思维导图
 
 Ver 1.4.5 新增禁用Oracle系统自带防火墙、Acme.sh和Screen后台任务管理脚本
@@ -75,9 +77,13 @@ hijk（暂无仓库地址）
 
 bench.sh https://bench.sh
 
+superbench https://github.com/oooldking/script
+
+lemonbench https://blog.ilemonrain.com/linux/LemonBench.html
+
 流媒体检测：https://github.com/lmc999/RegionRestrictionCheck
 
-三网测速：https://github.com/CoiaPrant/Speedtest
+三网测速：https://github.com/ernisn/superspeed/
 
 哪吒面板：https://github.com/naiba/nezha
 
