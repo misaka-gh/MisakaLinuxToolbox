@@ -6,11 +6,9 @@
 
 ![image.png](https://s2.loli.net/2021/12/26/WkiwbdExvnGAXCh.png)
 
-## 剧透
+## 脚本功能演示
 
-准备完全重构代码，力争更好的用户体验
-
-![image](https://user-images.githubusercontent.com/96560028/147842548-4c71e58d-38e8-4dc6-a758-15cc3bab5a75.png)
+![image](https://user-images.githubusercontent.com/96560028/147843563-05744b80-d9d7-47ed-a96a-4b27497f32ea.png)
 
 ## 使用方法
 
@@ -28,6 +26,8 @@ wget -N https://cdn.jsdelivr.net/gh/Misaka-blog/MisakaLinuxToolbox@master/Misaka
 [Telegram](https://t.me/misakanetcn)
 
 ## 来自姐姐大人的更新日志
+
+Ver 2.0 重构脚本，详细内容可看Github项目的思维导图
 
 Ver 1.4.5 新增禁用Oracle系统自带防火墙、Acme.sh和Screen后台任务管理脚本
 
