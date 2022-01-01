@@ -1,11 +1,10 @@
 #!/bin/bash
 
 # 一些全局变量
-ver="2.0"
-changeLog="重构脚本，详细内容可看Github项目的思维导图"
+ver="2.0.1"
+changeLog="新增一些VPS测试脚本"
 arch=`uname -m`
 virt=`systemd-detect-virt`
-TUN=$(cat /dev/net/tun 2>&1)
 kernelVer=`uname -r`
 
 green(){
@@ -220,16 +219,30 @@ function tgMTProxy(){
 
 # 第四页
 
-function benchsh(){
-    wget -qO- bench.sh | bash
+function vpsBench(){
+    echo "                            "
+    green "请选择你接下来使用的脚本"
+    echo "                            "
+    echo "1. 使用bench.sh"
+    echo "2. 使用superbench"
+    echo "3. 使用lemonbench"
+    echo "                            "
+    echo "0. 返回主菜单"
+    read -p "请输入选项:" page3NumberInput
+    case "$page3NumberInput" in
+        1 ) wget -qO- bench.sh | bash ;;
+        2 ) wget -qO- --no-check-certificate https://raw.githubusercontent.com/oooldking/script/master/superbench.sh | bash ;;
+        3 ) curl -fsL https://ilemonra.in/LemonBenchIntl | bash -s fast ;;
+        0 ) menu
+    esac
 }
 
 function mediaUnblockTest(){
     bash <(curl -L -s https://raw.githubusercontent.com/lmc999/RegionRestrictionCheck/main/check.sh)
 }
 
-function chinaSpeedTest(){
-    bash <(curl -sSL "https://github.com/CoiaPrant/Speedtest/raw/main/speedtest-multi.sh")
+function speedTest(){
+    bash <(curl -Lso- https://git.io/superspeed)
 }
 
 function updateScript(){
@@ -368,16 +381,16 @@ function page4(){
     echo "                            "
     green "请选择你接下来的操作"
     echo "                            "
-    echo "1. VPS测试（bench.sh）"
+    echo "1. VPS测试"
     echo "2. 流媒体检测"
     echo "3. VPS三网测速"
     echo "                            "
     echo "0. 返回主菜单"
     read -p "请输入选项:" page4NumberInput
     case "$page4NumberInput" in
-        1 ) benchsh ;;
+        1 ) vpsBench ;;
         2 ) mediaUnblockTest ;;
-        3 ) chinaSpeedTest ;;
+        3 ) speedTest ;;
         0 ) menu
     esac
 }
