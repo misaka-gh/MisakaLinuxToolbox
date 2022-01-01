@@ -6,7 +6,22 @@
 
 ![image.png](https://s2.loli.net/2021/12/26/WkiwbdExvnGAXCh.png)
 
+## 使用方法
+
+```shell
+wget -N https://cdn.jsdelivr.net/gh/Misaka-blog/MisakaLinuxToolbox@master/MisakaToolbox.sh && chmod -R 777 MisakaToolbox.sh && bash MisakaToolbox.sh
+```
+
+## 赞助我们
+
+![afdian-MisakaNo.jpg](https://s2.loli.net/2021/12/25/SimocqwhVg89NQJ.jpg)
+
+## 交流群
+[Telegram](https://t.me/misakanetcn)
+
 ## 来自姐姐大人的更新日志
+
+Ver 1.4.5 新增禁用Oracle系统自带防火墙、Acme.sh和Screen后台任务管理脚本
 
 Ver 1.4.4 在主菜单提示VPS信息，并新增部署Telegram MTProxy脚本
 
@@ -23,16 +38,3 @@ Ver 1.3: 添加可乐的ServerStatus-Horatu探针管理及客户端
 Ver 1.2: 添加流媒体检测，三网测速脚本
 
 Ver 1.1: 添加BBR及宝塔开心版、Docker安装脚本
-
-## 使用方法
-
-```shell
-wget -N https://cdn.jsdelivr.net/gh/Misaka-blog/MisakaLinuxToolbox@master/MisakaToolbox.sh && chmod -R 777 MisakaToolbox.sh && bash MisakaToolbox.sh
-```
-
-## 赞助我们
-
-![afdian-MisakaNo.jpg](https://s2.loli.net/2021/12/25/SimocqwhVg89NQJ.jpg)
-
-## 交流群
-[Telegram](https://t.me/misakanetcn)
