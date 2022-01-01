@@ -48,3 +48,15 @@ Ver 1.3: 添加可乐的ServerStatus-Horatu探针管理及客户端
 Ver 1.2: 添加流媒体检测，三网测速脚本
 
 Ver 1.1: 添加BBR及宝塔开心版、Docker安装脚本
+
+## 感谢列表
+
+感谢他们的贡献，让脚本得到进一步完善
+
+BBR(KVM)：https://raw.githubusercontent.com/ylx2016/Linux-NetSpeed
+BBR(OpenVZ)：https://github.com/mzz2017/lkl-haproxy/
+WARP脚本：https://github.com/fscarmen/warp
+宝塔开心版：https://fenhao.me/10.html
+宝塔国际版（aapanel）：https://www.aapanel.com/
+X-ui: https://github.com/vaxilu/x-ui
+Aria2: https://github.com/P3TERX/aria2.sh
