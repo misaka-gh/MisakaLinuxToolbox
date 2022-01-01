@@ -5,6 +5,7 @@ ver="2.0"
 changeLog="重构脚本，详细内容可看Github项目的思维导图"
 arch=`uname -m`
 virt=`systemd-detect-virt`
+TUN=$(cat /dev/net/tun 2>&1)
 kernelVer=`uname -r`
 
 green(){
