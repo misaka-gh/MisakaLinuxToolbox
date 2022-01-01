@@ -54,9 +54,31 @@ Ver 1.1: 添加BBR及宝塔开心版、Docker安装脚本
 感谢他们的贡献，让脚本得到进一步完善
 
 BBR(KVM)：https://raw.githubusercontent.com/ylx2016/Linux-NetSpeed
+
 BBR(OpenVZ)：https://github.com/mzz2017/lkl-haproxy/
+
 WARP脚本：https://github.com/fscarmen/warp
+
 宝塔开心版：https://fenhao.me/10.html
+
 宝塔国际版（aapanel）：https://www.aapanel.com/
+
 X-ui: https://github.com/vaxilu/x-ui
+
 Aria2: https://github.com/P3TERX/aria2.sh
+
+Mack-a：https://github.com/mack-a/v2ray-agent
+
+233boy：https://github.com/233boy/v2ray/wiki/V2Ray%E4%B8%80%E9%94%AE%E5%AE%89%E8%A3%85%E8%84%9A%E6%9C%AC
+
+hijk（暂无仓库地址）
+
+bench.sh https://bench.sh
+
+流媒体检测：https://github.com/lmc999/RegionRestrictionCheck
+
+三网测速：https://github.com/CoiaPrant/Speedtest
+
+哪吒面板：https://github.com/naiba/nezha
+
+可乐 ServerStartus-Horatu：https://github.com/cokemine/ServerStatus-Hotaru
