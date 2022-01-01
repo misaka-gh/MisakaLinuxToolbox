@@ -6,6 +6,12 @@
 
 ![image.png](https://s2.loli.net/2021/12/26/WkiwbdExvnGAXCh.png)
 
+## 剧透
+
+准备完全重构代码，力争更好的用户体验
+
+![image](https://user-images.githubusercontent.com/96560028/147842548-4c71e58d-38e8-4dc6-a758-15cc3bab5a75.png)
+
 ## 使用方法
 
 ```shell
