@@ -351,7 +351,7 @@ function page2(){
     read -p "请输入选项:" page2NumberInput
     case "$page2NumberInput" in
         1 ) bt ;;
-        2 ) x-ui ;;
+        2 ) xui ;;
         3 ) aria2 ;;
         0 ) menu
     esac
