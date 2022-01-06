@@ -6,6 +6,14 @@
 
 ![image.png](https://s2.loli.net/2021/12/26/WkiwbdExvnGAXCh.png)
 
+## 德鸡Dig9解决方案
+
+运行以下命令即可
+
+```shell
+echo -e nameserver 2a02:180:6:5::1c > /etc/resolv.conf
+```
+
 ## 脚本功能演示
 
 脚本完全重构，解决原脚本分类不清的问题
