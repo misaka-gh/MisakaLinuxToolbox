@@ -279,7 +279,7 @@ function menu(){
     red "                            "
     red "    Misaka Linux Toolbox    "
     echo "                            "
-    red "  https://blog.misaka.rest  "
+    red "  https://owo.misaka.rest  "
     echo "                            "
     red "============================"
     echo "                            "
