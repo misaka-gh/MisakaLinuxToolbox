@@ -37,6 +37,8 @@ wget -N https://cdn.jsdelivr.net/gh/Misaka-blog/MisakaLinuxToolbox@master/Misaka
 
 ## 来自姐姐大人的更新日志
 
+Ver 2.0.2 删除宝塔开心版脚本，优化BBR判断规则
+
 Ver 2.0.1 新增一些VPS测试脚本
 
 Ver 2.0 重构脚本，详细内容可看Github项目的思维导图
@@ -68,8 +70,6 @@ BBR(KVM)：https://raw.githubusercontent.com/ylx2016/Linux-NetSpeed
 BBR(OpenVZ)：https://github.com/mzz2017/lkl-haproxy/
 
 WARP脚本：https://github.com/fscarmen/warp
-
-宝塔开心版：https://fenhao.me/10.html
 
 宝塔国际版（aapanel）：https://www.aapanel.com/
 
