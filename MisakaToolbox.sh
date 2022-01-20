@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # 一些全局变量
-ver="2.0.1"
-changeLog="新增一些VPS测试脚本"
+ver="2.0.2"
+changeLog="删除宝塔开心版脚本，优化BBR判断规则"
 arch=`uname -m`
 virt=`systemd-detect-virt`
 kernelVer=`uname -r`
@@ -40,36 +40,30 @@ else
 fi
 
 if ! type curl >/dev/null 2>&1; then 
-    yellow "curl未安装，安装中"
+    yellow "curl未安装，正在安装中"
     if [ $release = "Centos" ]; then
         yum -y update && yum install curl -y
     else
         apt-get update -y && apt-get install curl -y
     fi	   
-else
-    green "curl已安装"
 fi
 
 if ! type wget >/dev/null 2>&1; then 
-    yellow "wget未安装，安装中"
+    yellow "wget未安装，正在安装中"
     if [ $release = "Centos" ]; then
         yum -y update && yum install wget -y
     else
         apt-get update -y && apt-get install wget -y
     fi	   
-else
-    green "wget已安装"
 fi
 
 if ! type sudo >/dev/null 2>&1; then 
-    yellow "sudo未安装，安装中"
+    yellow "sudo未安装，正在安装中"
     if [ $release = "Centos" ]; then
         yum -y update && yum install sudo -y
     else
         apt-get update -y && apt-get install sudo -y
     fi	   
-else
-    green "sudo已安装"
 fi
 
 function oraclefirewall(){
@@ -103,14 +97,17 @@ function bbr(){
     if [ ${virt} == "kvm" ]; then
         wget -N --no-check-certificate "https://raw.githubusercontent.com/chiakge/Linux-NetSpeed/master/tcp.sh" && chmod +x tcp.sh && ./tcp.sh
     fi
-    if [[ ${virt} == "lxc" || ${virt} == "openvz" ]]; then
+    if [ ${virt} == "openvz" ]; then
         if [[ ${TUN} == "cat: /dev/net/tun: File descriptor in bad state" ]]; then
-            green "已开启TUN，准备安装针对OpenVZ / LXC架构的BBR"
+            green "已开启TUN，准备安装针对OpenVZ架构的BBR脚本"
             wget --no-cache -O lkl-haproxy.sh https://github.com/mzz2017/lkl-haproxy/raw/master/lkl-haproxy.sh && bash lkl-haproxy.sh
         else
             red "未开启TUN，请在VPS后台设置以开启TUN"
             exit 1
         fi
+    fi
+    if [ ${virt} == "lxc" ]; then
+        red "你的VPS暂时不支持目前的bbr加速，抱歉！"
     fi
 }
 
@@ -125,58 +122,13 @@ function docker(){
 # 第二页
 
 function bt(){
-    echo "                   "
-    green "请选择你需要安装的版本"
-    echo "                            "
-    echo "1. 开心版"
-    echo "2. 国际版"
-    echo "                            "
-    read -p "请输入选项:" btNumberInput
-    case "$btNumberInput" in     
-        1 ) btHappy;;
-        2 ) 
-            if [ $release = "Centos" ]; then
-                yum install -y wget && wget -O install.sh http://www.aapanel.com/script/install_6.0_en.sh && bash install.sh forum
-            elif [ $release = "Debian" ]; then
-                wget -O install.sh http://www.aapanel.com/script/install-ubuntu_6.0_en.sh && bash install.sh forum
-            else
-                wget -O install.sh http://www.aapanel.com/script/install-ubuntu_6.0_en.sh && sudo bash install.sh forum
-            fi
-        ;;
-        0 ) menu;;
-    esac
-}
-
-function btHappy(){
-    echo "                   "
-    green "请选择你需要安装的版本"
-    echo "                   "
-    echo "1. 专业版"
-    echo "2. 企业版"
-    echo "0. 返回主页"
-    echo "                            "
-    read -p "请输入选项:" btHappyNumberInput
-    case "$btHappyNumberInput" in     
-        1 ) 
-            if [ $release = "Centos" ]; then
-                yum install -y wget && wget -O install.sh http://download.moetas.com/ltd/install/install_6.0.sh && sh install.sh
-            elif [ $release = "Debian" ]; then
-                wget -O install.sh http://download.moetas.com/ltd/install/install-ubuntu_6.0.sh && bash install.sh
-            else
-                wget -O install.sh http://download.moetas.com/ltd/install/install-ubuntu_6.0.sh && sudo bash install.sh
-            fi
-        ;;
-        2 ) 
-            if [ $release = "Centos" ]; then
-                yum install -y wget && wget -O install.sh http://download.moetas.com/install/install_6.0.sh && sh install.sh
-            elif [ $release = "Debian" ]; then
-                wget -O install.sh http://download.moetas.com/install/install-ubuntu_6.0.sh && bash install.sh
-            else
-                wget -O install.sh http://download.moetas.com/install/install-ubuntu_6.0.sh && sudo bash install.sh
-            fi
-        ;;
-        0 ) menu;;
-    esac
+    if [ $release = "Centos" ]; then
+        yum install -y wget && wget -O install.sh http://www.aapanel.com/script/install_6.0_en.sh && bash install.sh forum
+    elif [ $release = "Debian" ]; then
+        wget -O install.sh http://www.aapanel.com/script/install-ubuntu_6.0_en.sh && bash install.sh forum
+    else
+        wget -O install.sh http://www.aapanel.com/script/install-ubuntu_6.0_en.sh && sudo bash install.sh forum
+    fi
 }
 
 function xui(){
@@ -259,7 +211,7 @@ function nezha(){
 function serverstatus(){
     wget -N https://raw.githubusercontent.com/cokemine/ServerStatus-Hotaru/master/status.sh
     echo "                            "
-    green "请选择你需要安装的客户端类型"
+    green "请选择你需要安装探针的客户端类型"
     echo "                            "
     echo "1. 服务端"
     echo "2. 监控端"
