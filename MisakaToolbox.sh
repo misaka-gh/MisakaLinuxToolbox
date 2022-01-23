@@ -1,12 +1,19 @@
 #!/bin/bash
 
 # 一些全局变量
-ver="2.0.2"
-changeLog="删除宝塔开心版脚本，优化BBR判断规则"
+ver="2.0.3"
+changeLog="优化系统判断机制，增加本博客的Acme.sh证书申请脚本"
 arch=`uname -m`
 virt=`systemd-detect-virt`
 kernelVer=`uname -r`
+TUN=`cat /dev/net/tun`
+REGEX=("debian" "ubuntu" "centos|red hat|kernel|oracle linux|alma|rocky" "'amazon linux'" "alpine")
+RELEASE=("Debian" "Ubuntu" "CentOS" "CentOS" "Alpine")
+PACKAGE_UPDATE=("apt -y update" "apt -y update" "yum -y update" "yum -y update" "apk update -f")
+PACKAGE_INSTALL=("apt -y install" "apt -y install" "yum -y install" "yum -y install" "apk add -f")
+CMD=("$(grep -i pretty_name /etc/os-release 2>/dev/null | cut -d \" -f2)" "$(hostnamectl 2>/dev/null | grep -i system | cut -d : -f2)" "$(lsb_release -sd 2>/dev/null)" "$(grep -i description /etc/lsb-release 2>/dev/null | cut -d \" -f2)" "$(grep . /etc/redhat-release 2>/dev/null)" "$(grep . /etc/issue 2>/dev/null | cut -d \\ -f1 | sed '/^[ ]*$/d')")
 
+# 控制台字体
 green(){
     echo -e "\033[32m\033[01m$1\033[0m"
 }
@@ -19,55 +26,24 @@ yellow(){
     echo -e "\033[33m\033[01m$1\033[0m"
 }
 
-if [[ -f /etc/redhat-release ]]; then
-    release="Centos"
-elif cat /etc/issue | grep -q -E -i "debian"; then
-    release="Debian"
-elif cat /etc/issue | grep -q -E -i "ubuntu"; then
-    release="Ubuntu"
-elif cat /etc/issue | grep -q -E -i "centos|red hat|redhat"; then
-    release="Centos"
-elif cat /proc/version | grep -q -E -i "debian"; then
-    release="Debian"
-elif cat /proc/version | grep -q -E -i "ubuntu"; then
-    release="Ubuntu"
-elif cat /proc/version | grep -q -E -i "centos|red hat|redhat"; then
-    release="Centos"
-else 
-    red "不支持你当前系统，请使用Ubuntu、Debian、Centos的主流系统"
-    rm -f MisakaToolbox.sh
-    exit 1
-fi
+# 判断系统，此部分代码感谢fscarmen的技术指导
+for i in "${CMD[@]}"; do
+    SYS="$i" && [[ -n $SYS ]] && break
+done
 
-if ! type curl >/dev/null 2>&1; then 
-    yellow "curl未安装，正在安装中"
-    if [ $release = "Centos" ]; then
-        yum -y update && yum install curl -y
-    else
-        apt-get update -y && apt-get install curl -y
-    fi	   
-fi
+for ((int=0; int<${#REGEX[@]}; int++)); do
+    [[ $(echo "$SYS" | tr '[:upper:]' '[:lower:]') =~ ${REGEX[int]} ]] && SYSTEM="${RELEASE[int]}" && [[ -n $SYSTEM ]] && break
+done
 
-if ! type wget >/dev/null 2>&1; then 
-    yellow "wget未安装，正在安装中"
-    if [ $release = "Centos" ]; then
-        yum -y update && yum install wget -y
-    else
-        apt-get update -y && apt-get install wget -y
-    fi	   
-fi
+[[ -z $SYSTEM ]] && red "不支持VPS的当前系统，请使用主流操作系统" && exit 1
 
-if ! type sudo >/dev/null 2>&1; then 
-    yellow "sudo未安装，正在安装中"
-    if [ $release = "Centos" ]; then
-        yum -y update && yum install sudo -y
-    else
-        apt-get update -y && apt-get install sudo -y
-    fi	   
-fi
+# 更新系统及安装依赖，此部分代码感谢fscarmen的技术指导
+${PACKAGE_UPDATE[int]}
+${PACKAGE_INSTALL[int]} curl wget sudo
 
+#第一页
 function oraclefirewall(){
-    if [ $release = "Centos" ]; then
+    if [ $SYSTEM = "CentOS" ]; then
         systemctl stop oracle-cloud-agent
         systemctl disable oracle-cloud-agent
         systemctl stop oracle-cloud-agent-updater
@@ -82,8 +58,6 @@ function oraclefirewall(){
         apt-get purge netfilter-persistent -y
     fi
 }
-
-#第一页
 
 function rootLogin(){
     wget -N https://cdn.jsdelivr.net/gh/Misaka-blog/rootLogin@master/root.sh && chmod -R 777 root.sh && bash root.sh
@@ -107,7 +81,7 @@ function bbr(){
         fi
     fi
     if [ ${virt} == "lxc" ]; then
-        red "你的VPS暂时不支持目前的bbr加速，抱歉！"
+        red "抱歉，你的VPS暂时不支持bbr加速脚本"
     fi
 }
 
@@ -119,12 +93,15 @@ function docker(){
     curl -fsSL https://get.docker.com | bash -s docker --mirror Aliyun
 }
 
-# 第二页
+function acmesh(){
+    wget -N https://cdn.jsdelivr.net/gh/Misaka-blog/acme-1key@master/acme1key.sh && chmod -R 777 acme1key.sh && bash acme1key.sh
+}
 
+# 第二页
 function bt(){
-    if [ $release = "Centos" ]; then
+    if [ $SYSTEM = "CentOS" ]; then
         yum install -y wget && wget -O install.sh http://www.aapanel.com/script/install_6.0_en.sh && bash install.sh forum
-    elif [ $release = "Debian" ]; then
+    elif [ $SYSTEM = "Debian" ]; then
         wget -O install.sh http://www.aapanel.com/script/install-ubuntu_6.0_en.sh && bash install.sh forum
     else
         wget -O install.sh http://www.aapanel.com/script/install-ubuntu_6.0_en.sh && sudo bash install.sh forum
@@ -136,21 +113,15 @@ function xui(){
 }
 
 function aria2(){
-    if ! type ca-certificates >/dev/null 2>&1; then 
-        yellow "ca-certificates未安装，安装中"
-        if [ $release = "Centos" ]; then
-            yum -y update && yum install ca-certificates -y
-        else
-            apt-get update -y && apt-get install ca-certificates -y
-        fi	   
-    else
-        green "ca-certificates已安装"
-    fi
+    ${PACKAGE_INSTALL[int]} ca-certificates
     wget -N git.io/aria2.sh && chmod +x aria2.sh && bash aria2.sh
 }
 
-# 第三页
+function cyberpanel(){
 
+}
+
+# 第三页
 function macka(){
     wget -P /root -N --no-check-certificate "https://raw.githubusercontent.com/mack-a/v2ray-agent/master/install.sh" && chmod 700 /root/install.sh && /root/install.sh
 }
@@ -170,7 +141,6 @@ function tgMTProxy(){
 }
 
 # 第四页
-
 function vpsBench(){
     echo "                            "
     green "请选择你接下来使用的脚本"
@@ -202,7 +172,6 @@ function updateScript(){
 }
 
 # 第五页
-
 function nezha(){
     curl -L https://raw.githubusercontent.com/naiba/nezha/master/script/install.sh  -o nezha.sh && chmod +x nezha.sh
     sudo ./nezha.sh
@@ -225,15 +194,17 @@ function serverstatus(){
     esac
 }
 
+# 菜单
 function menu(){
     clear
-    red "============================"
-    red "                            "
-    red "    Misaka Linux Toolbox    "
-    echo "                            "
-    red "  https://owo.misaka.rest  "
-    echo "                            "
-    red "============================"
+    red "=================================="
+    echo "                           "
+    red "       Misaka Linux Toolbox        "
+    red "          by 小御坂的破站           "
+    echo "                           "
+    red "  Site: https://owo.misaka.rest  "
+    echo "                           "
+    red "=================================="
     echo "                            "
     green "检测到您当前运行的工具箱版本是：$ver"
     green "更新日志：$changeLog"
@@ -241,7 +212,7 @@ function menu(){
     yellow "检测到VPS信息如下"
     yellow "处理器架构：$arch"
     yellow "虚拟化架构：$virt"
-    yellow "操作系统：$release"
+    yellow "操作系统：$CMD"
     yellow "内核版本：$kernelVer"
     echo "                            "
     green "下面是脚本分类，请选择对应的分类后进入到相对应的菜单中"
@@ -277,6 +248,7 @@ function page1(){
     echo "4. 开启BBR"
     echo "5. 启用WARP"
     echo "6. 安装docker"
+    echo "7. Acme.sh 证书申请脚本"
     echo "                            "
     echo "0. 返回主菜单"
     read -p "请输入选项:" page1NumberInput
@@ -287,6 +259,7 @@ function page1(){
         4 ) bbr ;;
         5 ) warp ;;
         6 ) docker ;;
+        7 ) acmesh ;;
         0 ) menu
     esac
 }
