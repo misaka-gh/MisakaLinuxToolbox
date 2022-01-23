@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # 一些全局变量
-ver="2.0.3.1"
-changeLog="解决修复OpenVZ的BBR，TUN模块判断问题"
+ver="2.0.4"
+changeLog="增加安装ShadowSocks脚本，BBR支持IBM LinuxONE"
 arch=`uname -m`
 virt=`systemd-detect-virt`
 kernelVer=`uname -r`
@@ -69,11 +69,14 @@ function screenManager(){
 
 function bbr(){
     if [ ${virt} == "kvm" ]; then
-        wget -N --no-check-certificate "https://raw.githubusercontent.com/chiakge/Linux-NetSpeed/master/tcp.sh" && chmod +x tcp.sh && ./tcp.sh
+        wget -N --no-check-certificate "https://raw.githubusercontents.com/chiakge/Linux-NetSpeed/master/tcp.sh" && chmod +x tcp.sh && ./tcp.sh
+    fi
+    if [ ${virt} == "zvm" ]; then
+        wget -N --no-check-certificate "https://raw.githubusercontents.com/chiakge/Linux-NetSpeed/master/tcp.sh" && chmod +x tcp.sh && ./tcp.sh
     fi
     if [ ${virt} == "openvz" ]; then
         [[ ! $TUN =~ 'in bad state' ]] && [[ ! $TUN =~ '处于错误状态' ]] && red "未开启TUN，请去VPS后台开启" && exit 1
-        wget --no-cache -O lkl-haproxy.sh https://github.com/mzz2017/lkl-haproxy/raw/master/lkl-haproxy.sh && bash lkl-haproxy.sh
+        wget --no-cache -O lkl-haproxy.sh https://raw.githubusercontents.com/mzz2017/lkl-haproxy/master/lkl-haproxy.sh && bash lkl-haproxy.sh
     fi
     if [ ${virt} == "lxc" ]; then
         red "抱歉，你的VPS暂时不支持bbr加速脚本"
@@ -104,7 +107,7 @@ function bt(){
 }
 
 function xui(){
-    bash <(curl -Ls https://raw.githubusercontent.com/vaxilu/x-ui/master/install.sh)
+    bash <(curl -Ls https://raw.githubusercontents.com/vaxilu/x-ui/master/install.sh)
 }
 
 function aria2(){
@@ -118,7 +121,7 @@ function cyberpanel(){
 
 # 第三页
 function macka(){
-    wget -P /root -N --no-check-certificate "https://raw.githubusercontent.com/mack-a/v2ray-agent/master/install.sh" && chmod 700 /root/install.sh && /root/install.sh
+    wget -P /root -N --no-check-certificate "https://raw.githubusercontents.com/mack-a/v2ray-agent/master/install.sh" && chmod 700 /root/install.sh && /root/install.sh
 }
 
 function boy233(){
@@ -126,13 +129,19 @@ function boy233(){
 }
 
 function hijk(){
-    bash <(curl -sL https://raw.githubusercontent.com/Misaka-blog/hijk-backup/master/xray.sh)
+    bash <(curl -sL https://raw.githubusercontents.com/hijkpw/scripts/master/xray.sh)
 }
 
 function tgMTProxy(){
     mkdir /home/mtproxy && cd /home/mtproxy
-    curl -s -o mtproxy.sh https://raw.githubusercontent.com/sunpma/mtp/master/mtproxy.sh && chmod +x mtproxy.sh && bash mtproxy.sh
+    curl -s -o mtproxy.sh https://raw.githubusercontents.com/sunpma/mtp/master/mtproxy.sh && chmod +x mtproxy.sh && bash mtproxy.sh
     bash mtproxy.sh start
+}
+
+function shadowsocks(){
+    wget --no-check-certificate -O shadowsocks-all.sh https://raw.githubusercontents.com/teddysun/shadowsocks_install/master/shadowsocks-all.sh
+    chmod +x shadowsocks-all.sh
+    ./shadowsocks-all.sh 2>&1 | tee shadowsocks-all.log
 }
 
 # 第四页
@@ -148,14 +157,14 @@ function vpsBench(){
     read -p "请输入选项:" page3NumberInput
     case "$page3NumberInput" in
         1 ) wget -qO- bench.sh | bash ;;
-        2 ) wget -qO- --no-check-certificate https://raw.githubusercontent.com/oooldking/script/master/superbench.sh | bash ;;
+        2 ) wget -qO- --no-check-certificate https://raw.githubusercontents.com/oooldking/script/master/superbench.sh | bash ;;
         3 ) curl -fsL https://ilemonra.in/LemonBenchIntl | bash -s fast ;;
         0 ) menu
     esac
 }
 
 function mediaUnblockTest(){
-    bash <(curl -L -s https://raw.githubusercontent.com/lmc999/RegionRestrictionCheck/main/check.sh)
+    bash <(curl -L -s https://raw.githubusercontents.com/lmc999/RegionRestrictionCheck/main/check.sh)
 }
 
 function speedTest(){
@@ -163,17 +172,17 @@ function speedTest(){
 }
 
 function updateScript(){
-    wget -N https://raw.githubusercontent.com/Misaka-blog/MisakaLinuxToolbox/master/MisakaToolbox.sh && chmod -R 777 MisakaToolbox.sh && bash MisakaToolbox.sh
+    wget -N https://raw.githubusercontents.com/Misaka-blog/MisakaLinuxToolbox/master/MisakaToolbox.sh && chmod -R 777 MisakaToolbox.sh && bash MisakaToolbox.sh
 }
 
 # 第五页
 function nezha(){
-    curl -L https://raw.githubusercontent.com/naiba/nezha/master/script/install.sh  -o nezha.sh && chmod +x nezha.sh
+    curl -L https://raw.githubusercontents.com/naiba/nezha/master/script/install.sh  -o nezha.sh && chmod +x nezha.sh
     sudo ./nezha.sh
 }
 
 function serverstatus(){
-    wget -N https://raw.githubusercontent.com/cokemine/ServerStatus-Hotaru/master/status.sh
+    wget -N https://raw.githubusercontents.com/cokemine/ServerStatus-Hotaru/master/status.sh
     echo "                            "
     green "请选择你需要安装探针的客户端类型"
     echo "                            "
@@ -287,6 +296,7 @@ function page3(){
     echo "2. 使用233boy的脚本"
     echo "3. 使用hijk的脚本"
     echo "4. 搭建Telegram MTProxy代理"
+    echo "5. 使用Teddysun脚本搭建ShadowSocks"
     echo "                            "
     echo "0. 返回主菜单"
     read -p "请输入选项:" page3NumberInput
@@ -295,6 +305,7 @@ function page3(){
         2 ) boy233 ;;
         3 ) hijk ;;
         4 ) tgMTProxy ;;
+        5 ) shadowsocks ;;
         0 ) menu
     esac
 }
