@@ -118,7 +118,7 @@ function aria2(){
 }
 
 function cyberpanel(){
-
+    sh <(curl https://cyberpanel.net/install.sh || wget -O - https://cyberpanel.net/install.sh)
 }
 
 # 第三页
@@ -271,6 +271,7 @@ function page2(){
     echo "1. 安装宝塔面板"
     echo "2. 安装x-ui面板"
     echo "3. 安装aria2面板"
+    echo "4. 安装CyberPanel面板"
     echo "                            "
     echo "0. 返回主菜单"
     read -p "请输入选项:" page2NumberInput
@@ -278,6 +279,7 @@ function page2(){
         1 ) bt ;;
         2 ) xui ;;
         3 ) aria2 ;;
+        4 ) cyberpanel ;;
         0 ) menu
     esac
 }
