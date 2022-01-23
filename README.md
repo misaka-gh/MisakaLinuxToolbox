@@ -37,6 +37,8 @@ wget -N https://cdn.jsdelivr.net/gh/Misaka-blog/MisakaLinuxToolbox@master/Misaka
 
 ## 来自姐姐大人的更新日志
 
+Ver 2.0.3 优化系统判断机制，增加本博客的Acme.sh证书申请脚本
+
 Ver 2.0.2 删除宝塔开心版脚本，优化BBR判断规则
 
 Ver 2.0.1 新增一些VPS测试脚本
