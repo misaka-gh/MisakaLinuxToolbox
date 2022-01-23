@@ -37,6 +37,8 @@ wget -N https://cdn.jsdelivr.net/gh/Misaka-blog/MisakaLinuxToolbox@master/Misaka
 
 ## 来自姐姐大人的更新日志
 
+Ver 2.0.4 增加安装ShadowSocks脚本，BBR支持IBM LinuxONE
+
 Ver 2.0.3.1 解决修复OpenVZ的BBR，TUN模块判断问题
 
 Ver 2.0.3 优化系统判断机制，增加本博客的Acme.sh证书申请脚本
@@ -88,6 +90,8 @@ Mack-a：https://github.com/mack-a/v2ray-agent
 233boy：https://github.com/233boy/v2ray/wiki/V2Ray%E4%B8%80%E9%94%AE%E5%AE%89%E8%A3%85%E8%84%9A%E6%9C%AC
 
 hijk：https://github.com/hijkpw/scripts
+
+ShadowSocks: https://github.com/teddysun/shadowsocks_install/tree/master
 
 bench.sh https://bench.sh
 
