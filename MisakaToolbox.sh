@@ -1,12 +1,12 @@
 #!/bin/bash
 
 # 一些全局变量
-ver="2.0.3"
-changeLog="优化系统判断机制，增加本博客的Acme.sh证书申请脚本"
+ver="2.0.3.1"
+changeLog="解决修复OpenVZ的BBR，TUN模块判断问题"
 arch=`uname -m`
 virt=`systemd-detect-virt`
 kernelVer=`uname -r`
-TUN=`cat /dev/net/tun`
+TUN=$(cat /dev/net/tun 2>&1 | tr '[:upper:]' '[:lower:]')
 REGEX=("debian" "ubuntu" "centos|red hat|kernel|oracle linux|alma|rocky" "'amazon linux'" "alpine")
 RELEASE=("Debian" "Ubuntu" "CentOS" "CentOS" "Alpine")
 PACKAGE_UPDATE=("apt -y update" "apt -y update" "yum -y update" "yum -y update" "apk update -f")
@@ -72,13 +72,8 @@ function bbr(){
         wget -N --no-check-certificate "https://raw.githubusercontent.com/chiakge/Linux-NetSpeed/master/tcp.sh" && chmod +x tcp.sh && ./tcp.sh
     fi
     if [ ${virt} == "openvz" ]; then
-        if [[ ${TUN} == "cat: /dev/net/tun: File descriptor in bad state" ]]; then
-            green "已开启TUN，准备安装针对OpenVZ架构的BBR脚本"
-            wget --no-cache -O lkl-haproxy.sh https://github.com/mzz2017/lkl-haproxy/raw/master/lkl-haproxy.sh && bash lkl-haproxy.sh
-        else
-            red "未开启TUN，请在VPS后台设置以开启TUN"
-            exit 1
-        fi
+        [[ ! $TUN =~ 'in bad state' ]] && [[ ! $TUN =~ '处于错误状态' ]] && red "未开启TUN，请去VPS后台开启" && exit 1
+        wget --no-cache -O lkl-haproxy.sh https://github.com/mzz2017/lkl-haproxy/raw/master/lkl-haproxy.sh && bash lkl-haproxy.sh
     fi
     if [ ${virt} == "lxc" ]; then
         red "抱歉，你的VPS暂时不支持bbr加速脚本"
