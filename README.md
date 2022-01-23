@@ -79,6 +79,8 @@ X-ui: https://github.com/vaxilu/x-ui
 
 Aria2: https://github.com/P3TERX/aria2.sh
 
+CyberPanel：https://cyberpanel.net/
+
 Mack-a：https://github.com/mack-a/v2ray-agent
 
 233boy：https://github.com/233boy/v2ray/wiki/V2Ray%E4%B8%80%E9%94%AE%E5%AE%89%E8%A3%85%E8%84%9A%E6%9C%AC
