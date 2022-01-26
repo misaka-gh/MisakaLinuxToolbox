@@ -37,6 +37,8 @@ wget -N https://cdn.jsdelivr.net/gh/Misaka-blog/MisakaLinuxToolbox@master/Misaka
 
 ## 来自姐姐大人的更新日志
 
+Ver 2.0.5 添加不同作者的WARP脚本，给予用户更多选择。增加德鸡DiG9网络解决方案
+
 Ver 2.0.4 增加安装ShadowSocks脚本，BBR支持IBM LinuxONE
 
 Ver 2.0.3.1 解决修复OpenVZ的BBR，TUN模块判断问题
