@@ -37,6 +37,8 @@ wget -N https://cdn.jsdelivr.net/gh/Misaka-blog/MisakaLinuxToolbox@master/Misaka
 
 ## 来自姐姐大人的更新日志
 
+Ver 2.0.6 增加DD系统选项（选项仅在KVM VPS显示）
+
 Ver 2.0.5 添加不同作者的WARP脚本，给予用户更多选择。增加德鸡DiG9网络解决方案
 
 Ver 2.0.4 增加安装ShadowSocks脚本，BBR支持IBM LinuxONE
@@ -108,3 +110,5 @@ lemonbench https://blog.ilemonrain.com/linux/LemonBench.html
 哪吒面板：https://github.com/naiba/nezha
 
 可乐 ServerStartus-Horatu：https://github.com/cokemine/ServerStatus-Hotaru
+
+DD系统：https://www.cxthhhhh.com/network-reinstall-system-modify
