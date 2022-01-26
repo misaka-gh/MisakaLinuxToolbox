@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # 一些全局变量
-ver="2.0.4"
-changeLog="增加安装ShadowSocks脚本，BBR支持IBM LinuxONE"
+ver="2.0.5"
+changeLog="添加不同作者的WARP脚本，给予用户更多选择。增加德鸡DiG9网络解决方案"
 arch=`uname -m`
 virt=`systemd-detect-virt`
 kernelVer=`uname -r`
@@ -59,6 +59,10 @@ function oraclefirewall(){
     fi
 }
 
+function euservDig9(){
+    echo -e "search blue.kundencontroller.de\noptions rotate\nnameserver 2a02:180:6:5::1c\nnameserver 2a02:180:6:5::4\nnameserver 2a02:180:6:5::1e\nnameserver 2a02:180:6:5::1d" > /etc/resolv.conf
+}
+
 function rootLogin(){
     wget -N https://cdn.jsdelivr.net/gh/Misaka-blog/rootLogin@master/root.sh && chmod -R 777 root.sh && bash root.sh
 }
@@ -75,7 +79,7 @@ function bbr(){
         wget -N --no-check-certificate "https://raw.githubusercontents.com/chiakge/Linux-NetSpeed/master/tcp.sh" && chmod +x tcp.sh && ./tcp.sh
     fi
     if [ ${virt} == "openvz" ]; then
-        [[ ! $TUN =~ 'in bad state' ]] && [[ ! $TUN =~ '处于错误状态' ]] && red "未开启TUN，请去VPS后台开启" && exit 1
+        [[ ! $TUN =~ 'in bad state' ]] && [[ ! $TUN =~ '处于错误状态' ]] && [[ ! $TUN =~ 'Die Dateizugriffsnummer ist in schlechter Verfassung' ]] && red "未开启TUN，请去VPS后台开启" && exit 1
         wget --no-cache -O lkl-haproxy.sh https://raw.githubusercontents.com/mzz2017/lkl-haproxy/master/lkl-haproxy.sh && bash lkl-haproxy.sh
     fi
     if [ ${virt} == "lxc" ]; then
@@ -84,7 +88,21 @@ function bbr(){
 }
 
 function warp(){
-    wget -N https://cdn.jsdelivr.net/gh/fscarmen/warp/menu.sh && bash menu.sh
+    echo "                            "
+    green "请选择你接下来使用的脚本"
+    echo "                            "
+    echo "1. 【推荐】 fscarmen"
+    echo "2. kkkyg（甬哥）"
+    echo "3. P3TERX"
+    echo "                            "
+    echo "0. 返回主菜单"
+    read -p "请输入选项:" warpNumberInput
+    case "$warpNumberInput" in
+        1 ) wget -N https://cdn.jsdelivr.net/gh/fscarmen/warp/menu.sh && bash menu.sh ;;
+        2 ) wget -N https://cdn.jsdelivr.net/gh/kkkyg/CFwarp/CFwarp.sh && bash CFwarp.sh ;;
+        3 ) bash <(curl -fsSL git.io/warp.sh) ;;
+        0 ) menu
+    esac
 }
 
 function docker(){
@@ -210,7 +228,7 @@ function menu(){
     echo "                           "
     red "=================================="
     echo "                            "
-    green "检测到您当前运行的工具箱版本是：$ver"
+    green "当前工具箱版本：v$ver"
     green "更新日志：$changeLog"
     echo "                            "
     yellow "检测到VPS信息如下"
@@ -247,23 +265,25 @@ function page1(){
     green "请选择你接下来的操作"
     echo "                            "
     echo "1. Oracle 原生系统关闭防火墙"
-    echo "2. 修改登录方式为 root + 密码 登录"
-    echo "3. Screen 后台任务管理"
-    echo "4. 开启BBR"
-    echo "5. 启用WARP"
-    echo "6. 安装docker"
-    echo "7. Acme.sh 证书申请脚本"
+    echo "2. 德鸡DiG9正常访问网络解决方案"
+    echo "3. 修改登录方式为 root + 密码 登录"
+    echo "4. Screen 后台任务管理"
+    echo "5. 开启BBR"
+    echo "6. 启用WARP"
+    echo "7. 安装docker"
+    echo "8. Acme.sh 证书申请脚本"
     echo "                            "
     echo "0. 返回主菜单"
     read -p "请输入选项:" page1NumberInput
     case "$page1NumberInput" in
         1 ) oraclefirewall ;;
-        2 ) rootLogin ;;
-        3 ) screenManager ;;
-        4 ) bbr ;;
-        5 ) warp ;;
-        6 ) docker ;;
-        7 ) acmesh ;;
+        2 ) euservDig9 ;;
+        3 ) rootLogin ;;
+        4 ) screenManager ;;
+        5 ) bbr ;;
+        6 ) warp ;;
+        7 ) docker ;;
+        8 ) acmesh ;;
         0 ) menu
     esac
 }
