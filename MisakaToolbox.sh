@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # 一些全局变量
-ver="2.0.5"
-changeLog="添加不同作者的WARP脚本，给予用户更多选择。增加德鸡DiG9网络解决方案"
+ver="2.0.6"
+changeLog="增加DD系统选项（选项仅在KVM VPS显示）"
 arch=`uname -m`
 virt=`systemd-detect-virt`
 kernelVer=`uname -r`
@@ -189,10 +189,6 @@ function speedTest(){
     bash <(curl -Lso- https://git.io/superspeed)
 }
 
-function updateScript(){
-    wget -N https://raw.githubusercontents.com/Misaka-blog/MisakaLinuxToolbox/master/MisakaToolbox.sh && chmod -R 777 MisakaToolbox.sh && bash MisakaToolbox.sh
-}
-
 # 第五页
 function nezha(){
     curl -L https://raw.githubusercontents.com/naiba/nezha/master/script/install.sh  -o nezha.sh && chmod +x nezha.sh
@@ -244,6 +240,9 @@ function menu(){
     echo "3. 节点相关"
     echo "4. VPS测试"
     echo "5. VPS探针"
+    if [ ${virt} == "kvm" ]; then
+        echo "6. VPS DD系统"
+    fi
     echo "                            "
     echo "9. 更新脚本"
     echo "0. 退出脚本"
@@ -255,7 +254,8 @@ function menu(){
         3 ) page3 ;;
         4 ) page4 ;;
         5 ) page5 ;;
-        9 ) updateScript ;;
+        6 ) wget --no-check-certificate -qO ~/Network-Reinstall-System-Modify.sh 'https://www.cxthhhhh.com/CXT-Library/Network-Reinstall-System-Modify/Network-Reinstall-System-Modify.sh' && chmod a+x ~/Network-Reinstall-System-Modify.sh && bash ~/Network-Reinstall-System-Modify.sh -UI_Options ;;
+        9 ) wget -N https://raw.githubusercontents.com/Misaka-blog/MisakaLinuxToolbox/master/MisakaToolbox.sh && chmod -R 777 MisakaToolbox.sh && bash MisakaToolbox.sh ;;
         0 ) exit 0
     esac
 }
