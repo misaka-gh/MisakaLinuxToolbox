@@ -2,7 +2,7 @@
 
 # 全局变量
 ver="2.0.7"
-changeLog="增加脚本运行次数统计"
+changeLog="增加脚本运行次数统计，fscarmen的warp docker版脚本"
 arch=`uname -m`
 virt=`systemd-detect-virt`
 kernelVer=`uname -r`
