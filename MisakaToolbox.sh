@@ -1,17 +1,27 @@
 #!/bin/bash
 
-# 一些全局变量
-ver="2.0.6"
-changeLog="增加DD系统选项（选项仅在KVM VPS显示）"
+# 全局变量
+ver="2.0.7"
+changeLog="增加脚本运行次数统计"
 arch=`uname -m`
 virt=`systemd-detect-virt`
 kernelVer=`uname -r`
 TUN=$(cat /dev/net/tun 2>&1 | tr '[:upper:]' '[:lower:]')
+IP4=$(curl -s4m2 https://ip.gs/json)
+IP6=$(curl -s6m2 https://ip.gs/json)
+WAN4=$(expr "$IP4" : '.*ip\":\"\([^"]*\).*')
+WAN6=$(expr "$IP6" : '.*ip\":\"\([^"]*\).*')
+COUNTRY4=$(expr "$IP4" : '.*country\":\"\([^"]*\).*')
+COUNTRY6=$(expr "$IP6" : '.*country\":\"\([^"]*\).*')
+ASNORG4=$(expr "$IP4" : '.*asn_org\":\"\([^"]*\).*')
+ASNORG6=$(expr "$IP6" : '.*asn_org\":\"\([^"]*\).*')
 REGEX=("debian" "ubuntu" "centos|red hat|kernel|oracle linux|alma|rocky" "'amazon linux'" "alpine")
 RELEASE=("Debian" "Ubuntu" "CentOS" "CentOS" "Alpine")
 PACKAGE_UPDATE=("apt -y update" "apt -y update" "yum -y update" "yum -y update" "apk update -f")
 PACKAGE_INSTALL=("apt -y install" "apt -y install" "yum -y install" "yum -y install" "apk add -f")
 CMD=("$(grep -i pretty_name /etc/os-release 2>/dev/null | cut -d \" -f2)" "$(hostnamectl 2>/dev/null | grep -i system | cut -d : -f2)" "$(lsb_release -sd 2>/dev/null)" "$(grep -i description /etc/lsb-release 2>/dev/null | cut -d \" -f2)" "$(grep . /etc/redhat-release 2>/dev/null)" "$(grep . /etc/issue 2>/dev/null | cut -d \\ -f1 | sed '/^[ ]*$/d')")
+COUNT=$(curl -sm1 "https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fcdn.jsdelivr.net%2Fgh%2FMisaka-blog%2FMisakaLinuxToolbox%40master%2FMisakaToolbox.sh&count_bg=%2379C83D&title_bg=%23555555&icon=&icon_color=%23E7E7E7&title=hits&edge_flat=false" 2>&1) &&
+TODAY=$(expr "$COUNT" : '.*\s\([0-9]\{1,\}\)\s/.*') && TOTAL=$(expr "$COUNT" : '.*/\s\([0-9]\{1,\}\)\s.*')
 
 # 控制台字体
 green(){
@@ -26,6 +36,9 @@ yellow(){
     echo -e "\033[33m\033[01m$1\033[0m"
 }
 
+# 必须以root运行脚本
+[[ $(id -u) != 0 ]] && red "请使用“sudo -i”登录root用户后执行工具箱脚本！！！" && exit 1
+
 # 判断系统，此部分代码感谢fscarmen的技术指导
 for i in "${CMD[@]}"; do
     SYS="$i" && [[ -n $SYS ]] && break
@@ -38,8 +51,19 @@ done
 [[ -z $SYSTEM ]] && red "不支持VPS的当前系统，请使用主流操作系统" && exit 1
 
 # 更新系统及安装依赖，此部分代码感谢fscarmen的技术指导
+green "请稍等，正在检测并安装必要的依赖"
 ${PACKAGE_UPDATE[int]}
 ${PACKAGE_INSTALL[int]} curl wget sudo
+
+# 判断IP地址状态
+IP4="$WAN4 （$COUNTRY4 $ASNORG4）"
+IP6="$WAN6 （$COUNTRY6 $ASNORG6）"
+if [ -z $WAN4 ]; then
+    IP4="当前VPS未检测到IPv4地址"
+fi
+if [ -z $WAN6 ]; then
+    IP6="当前VPS未检测到IPv6地址"
+fi
 
 #第一页
 function oraclefirewall(){
@@ -50,12 +74,14 @@ function oraclefirewall(){
         systemctl disable oracle-cloud-agent-updater
         systemctl stop firewalld.service
         systemctl disable firewalld.service
+        yellow "Oracle Cloud原生系统防火墙禁用成功"
     else
         iptables -P INPUT ACCEPT
         iptables -P FORWARD ACCEPT
         iptables -P OUTPUT ACCEPT
         iptables -F
         apt-get purge netfilter-persistent -y
+        yellow "Oracle Cloud原生系统防火墙禁用成功"
     fi
 }
 
@@ -92,15 +118,17 @@ function warp(){
     green "请选择你接下来使用的脚本"
     echo "                            "
     echo "1. 【推荐】 fscarmen"
-    echo "2. kkkyg（甬哥）"
-    echo "3. P3TERX"
+    echo "2. fscarmen-docker"
+    echo "3. kkkyg（甬哥）"
+    echo "4. P3TERX"
     echo "                            "
     echo "0. 返回主菜单"
     read -p "请输入选项:" warpNumberInput
     case "$warpNumberInput" in
         1 ) wget -N https://cdn.jsdelivr.net/gh/fscarmen/warp/menu.sh && bash menu.sh ;;
-        2 ) wget -N https://cdn.jsdelivr.net/gh/kkkyg/CFwarp/CFwarp.sh && bash CFwarp.sh ;;
-        3 ) bash <(curl -fsSL git.io/warp.sh) ;;
+        2 ) wget -N https://cdn.jsdelivr.net/gh/fscarmen/warp/docker.sh && bash docker.sh ;;
+        3 ) wget -N https://cdn.jsdelivr.net/gh/kkkyg/CFwarp/CFwarp.sh && bash CFwarp.sh ;;
+        4 ) bash <(curl -fsSL git.io/warp.sh) ;;
         0 ) menu
     esac
 }
@@ -226,12 +254,15 @@ function menu(){
     echo "                            "
     green "当前工具箱版本：v$ver"
     green "更新日志：$changeLog"
+    green "今日运行次数：$TODAY 总共运行次数：$TOTAL"
     echo "                            "
-    yellow "检测到VPS信息如下"
+    red "检测到VPS信息如下："
     yellow "处理器架构：$arch"
     yellow "虚拟化架构：$virt"
     yellow "操作系统：$CMD"
     yellow "内核版本：$kernelVer"
+    yellow "IPv4地址：$IP4"
+    yellow "IPv6地址：$IP6"
     echo "                            "
     green "下面是脚本分类，请选择对应的分类后进入到相对应的菜单中"
     echo "                            "
@@ -264,7 +295,7 @@ function page1(){
     echo "                            "
     green "请选择你接下来的操作"
     echo "                            "
-    echo "1. Oracle 原生系统关闭防火墙"
+    echo "1. Oracle Cloud原生系统关闭防火墙"
     echo "2. 德鸡DiG9正常访问网络解决方案"
     echo "3. 修改登录方式为 root + 密码 登录"
     echo "4. Screen 后台任务管理"
