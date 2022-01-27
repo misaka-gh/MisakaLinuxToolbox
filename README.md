@@ -14,12 +14,6 @@ wget -N https://cdn.jsdelivr.net/gh/Misaka-blog/MisakaLinuxToolbox@master/beta.s
 
 快捷方式 `bash MisakaToolbox.sh`
 
-## 脚本功能演示
-
-脚本完全重构，解决原脚本分类不清的问题
-
-![image](https://user-images.githubusercontent.com/96560028/147843563-05744b80-d9d7-47ed-a96a-4b27497f32ea.png)
-
 ## 使用方法
 
 ```shell
