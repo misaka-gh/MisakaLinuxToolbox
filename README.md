@@ -6,14 +6,6 @@
 
 ![image.png](https://s2.loli.net/2021/12/26/WkiwbdExvnGAXCh.png)
 
-## Beta版本测试！！！
-
-```shell
-wget -N https://cdn.jsdelivr.net/gh/Misaka-blog/MisakaLinuxToolbox@master/beta.sh && chmod -R 777 beta.sh && mv beta.sh MisakaToolbox.sh && bash MisakaToolbox.sh
-```
-
-快捷方式 `bash MisakaToolbox.sh`
-
 ## 使用方法
 
 ```shell
