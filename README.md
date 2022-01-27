@@ -6,13 +6,13 @@
 
 ![image.png](https://s2.loli.net/2021/12/26/WkiwbdExvnGAXCh.png)
 
-## 德鸡Dig9解决方案
-
-运行以下命令即可
+## Beta版本测试！！！
 
 ```shell
-echo -e nameserver 2a02:180:6:5::1c > /etc/resolv.conf
+wget -N https://cdn.jsdelivr.net/gh/Misaka-blog/MisakaLinuxToolbox@master/beta.sh && chmod -R 777 beta.sh && mv beta.sh MisakaToolbox.sh && bash MisakaToolbox.sh
 ```
+
+快捷方式 `bash MisakaToolbox.sh`
 
 ## 脚本功能演示
 
