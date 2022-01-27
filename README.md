@@ -23,6 +23,8 @@ wget -N https://cdn.jsdelivr.net/gh/Misaka-blog/MisakaLinuxToolbox@master/Misaka
 
 ## 来自姐姐大人的更新日志
 
+Ver 2.0.7 增加脚本运行次数统计，fscarmen的warp docker版脚本
+
 Ver 2.0.6 增加DD系统选项（选项仅在KVM VPS显示）
 
 Ver 2.0.5 添加不同作者的WARP脚本，给予用户更多选择。增加德鸡DiG9网络解决方案
