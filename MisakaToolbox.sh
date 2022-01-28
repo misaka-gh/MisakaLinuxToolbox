@@ -1,27 +1,17 @@
 #!/bin/bash
 
 # 全局变量
-ver="2.0.7"
-changeLog="增加脚本运行次数统计，fscarmen的warp docker版脚本"
+ver="2.0.8"
+changeLog="增加青龙面板，修复纯净Debian系统获取不到VPS IP地址的问题"
 arch=`uname -m`
 virt=`systemd-detect-virt`
 kernelVer=`uname -r`
 TUN=$(cat /dev/net/tun 2>&1 | tr '[:upper:]' '[:lower:]')
-IP4=$(curl -s4m2 https://ip.gs/json)
-IP6=$(curl -s6m2 https://ip.gs/json)
-WAN4=$(expr "$IP4" : '.*ip\":\"\([^"]*\).*')
-WAN6=$(expr "$IP6" : '.*ip\":\"\([^"]*\).*')
-COUNTRY4=$(expr "$IP4" : '.*country\":\"\([^"]*\).*')
-COUNTRY6=$(expr "$IP6" : '.*country\":\"\([^"]*\).*')
-ASNORG4=$(expr "$IP4" : '.*asn_org\":\"\([^"]*\).*')
-ASNORG6=$(expr "$IP6" : '.*asn_org\":\"\([^"]*\).*')
 REGEX=("debian" "ubuntu" "centos|red hat|kernel|oracle linux|alma|rocky" "'amazon linux'" "alpine")
 RELEASE=("Debian" "Ubuntu" "CentOS" "CentOS" "Alpine")
 PACKAGE_UPDATE=("apt -y update" "apt -y update" "yum -y update" "yum -y update" "apk update -f")
 PACKAGE_INSTALL=("apt -y install" "apt -y install" "yum -y install" "yum -y install" "apk add -f")
 CMD=("$(grep -i pretty_name /etc/os-release 2>/dev/null | cut -d \" -f2)" "$(hostnamectl 2>/dev/null | grep -i system | cut -d : -f2)" "$(lsb_release -sd 2>/dev/null)" "$(grep -i description /etc/lsb-release 2>/dev/null | cut -d \" -f2)" "$(grep . /etc/redhat-release 2>/dev/null)" "$(grep . /etc/issue 2>/dev/null | cut -d \\ -f1 | sed '/^[ ]*$/d')")
-COUNT=$(curl -sm2 "https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fcdn.jsdelivr.net%2Fgh%2FMisaka-blog%2FMisakaLinuxToolbox%40master%2FMisakaToolbox.sh&count_bg=%2379C83D&title_bg=%23555555&icon=&icon_color=%23E7E7E7&title=hits&edge_flat=false" 2>&1) &&
-TODAY=$(expr "$COUNT" : '.*\s\([0-9]\{1,\}\)\s/.*') && TOTAL=$(expr "$COUNT" : '.*/\s\([0-9]\{1,\}\)\s.*')
 
 # 控制台字体
 green(){
@@ -51,9 +41,18 @@ done
 [[ -z $SYSTEM ]] && red "不支持VPS的当前系统，请使用主流操作系统" && exit 1
 
 # 更新系统及安装依赖，此部分代码感谢fscarmen的技术指导
-green "请稍等，正在检测并安装必要的依赖"
 ${PACKAGE_UPDATE[int]}
 ${PACKAGE_INSTALL[int]} curl wget sudo
+
+# 获取IP地址及其信息
+IP4=$(curl -s4m2 https://ip.gs/json)
+IP6=$(curl -s6m2 https://ip.gs/json)
+WAN4=$(expr "$IP4" : '.*ip\":\"\([^"]*\).*')
+WAN6=$(expr "$IP6" : '.*ip\":\"\([^"]*\).*')
+COUNTRY4=$(expr "$IP4" : '.*country\":\"\([^"]*\).*')
+COUNTRY6=$(expr "$IP6" : '.*country\":\"\([^"]*\).*')
+ASNORG4=$(expr "$IP4" : '.*asn_org\":\"\([^"]*\).*')
+ASNORG6=$(expr "$IP6" : '.*asn_org\":\"\([^"]*\).*')
 
 # 判断IP地址状态
 IP4="$WAN4 （$COUNTRY4 $ASNORG4）"
@@ -64,6 +63,10 @@ fi
 if [ -z $WAN6 ]; then
     IP6="当前VPS未检测到IPv6地址"
 fi
+
+# 获取脚本运行次数
+COUNT=$(curl -sm2 "https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fcdn.jsdelivr.net%2Fgh%2FMisaka-blog%2FMisakaLinuxToolbox%40master%2FMisakaToolbox.sh&count_bg=%2379C83D&title_bg=%23555555&icon=&icon_color=%23E7E7E7&title=hits&edge_flat=false" 2>&1) &&
+TODAY=$(expr "$COUNT" : '.*\s\([0-9]\{1,\}\)\s/.*') && TOTAL=$(expr "$COUNT" : '.*/\s\([0-9]\{1,\}\)\s.*')
 
 #第一页
 function oraclefirewall(){
@@ -133,7 +136,7 @@ function warp(){
     esac
 }
 
-function docker(){
+function dockerInstall(){
     curl -fsSL https://get.docker.com | bash -s docker --mirror Aliyun
 }
 
@@ -163,6 +166,25 @@ function aria2(){
 
 function cyberpanel(){
     sh <(curl https://cyberpanel.net/install.sh || wget -O - https://cyberpanel.net/install.sh)
+}
+
+function qlPanel(){
+    if [[ -z $(docker -v) ]]; then
+        yellow "检测到VPS未安装Docker环境，正在自动安装docker"
+        curl -fsSL https://get.docker.com | bash -s docker --mirror Aliyun
+    fi
+    docker run -dit --name QL --hostname QL --restart always -p 5700:5700 -v $PWD/QL/config:/ql/config -v $PWD/QL/log:/ql/log -v $PWD/QL/db:/ql/db -v $PWD/QL/scripts:/ql/scripts -v $PWD/QL/jbot:/ql/jbot whyour/qinglong:latest
+    yellow "青龙面板安装成功！！！"
+    if [ -z $WAN4 ]; then
+        green "IPv4访问地址为："
+    else
+        green "IPv4访问地址为：http://$WAN4:5700"
+    fi
+    if [ -z $WAN6 ]; then
+        green "IPv6访问地址为："
+    else
+        green "IPv6访问地址为：http://[$WAN6]:5700"
+    fi
 }
 
 # 第三页
@@ -313,7 +335,7 @@ function page1(){
         4 ) screenManager ;;
         5 ) bbr ;;
         6 ) warp ;;
-        7 ) docker ;;
+        7 ) dockerInstall ;;
         8 ) acmesh ;;
         0 ) menu
     esac
@@ -327,6 +349,7 @@ function page2(){
     echo "2. 安装x-ui面板"
     echo "3. 安装aria2面板"
     echo "4. 安装CyberPanel面板"
+    echo "5. 安装青龙面板"
     echo "                            "
     echo "0. 返回主菜单"
     read -p "请输入选项:" page2NumberInput
@@ -335,6 +358,7 @@ function page2(){
         2 ) xui ;;
         3 ) aria2 ;;
         4 ) cyberpanel ;;
+        5 ) qlPanel ;;
         0 ) menu
     esac
 }
