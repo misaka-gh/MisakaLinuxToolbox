@@ -23,6 +23,8 @@ wget -N https://cdn.jsdelivr.net/gh/Misaka-blog/MisakaLinuxToolbox@master/Misaka
 
 ## 来自姐姐大人的更新日志
 
+Ver 2.0.8 增加青龙面板，修复纯净Debian系统获取不到VPS IP地址的问题
+
 Ver 2.0.7 增加脚本运行次数统计，fscarmen的warp docker版脚本
 
 Ver 2.0.6 增加DD系统选项（选项仅在KVM VPS显示）
@@ -100,3 +102,5 @@ lemonbench https://blog.ilemonrain.com/linux/LemonBench.html
 可乐 ServerStartus-Horatu：https://github.com/cokemine/ServerStatus-Hotaru
 
 DD系统：https://www.cxthhhhh.com/network-reinstall-system-modify
+
+青龙面板：https://github.com/whyour/qinglong
