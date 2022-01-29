@@ -23,6 +23,8 @@ wget -N https://cdn.jsdelivr.net/gh/Misaka-blog/MisakaLinuxToolbox@master/Misaka
 
 ## 来自姐姐大人的更新日志
 
+Ver 2.0.9 增加Trojan面板，fscarmen的warp流媒体解锁脚本
+
 Ver 2.0.8 增加青龙面板，修复纯净Debian系统获取不到VPS IP地址的问题
 
 Ver 2.0.7 增加脚本运行次数统计，fscarmen的warp docker版脚本
