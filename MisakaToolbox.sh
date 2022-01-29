@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # 全局变量
-ver="2.0.8"
-changeLog="增加青龙面板，修复纯净Debian系统获取不到VPS IP地址的问题"
+ver="2.0.9"
+changeLog="增加Trojan面板，fscarmen的warp流媒体解锁脚本"
 arch=`uname -m`
 virt=`systemd-detect-virt`
 kernelVer=`uname -r`
@@ -122,14 +122,16 @@ function warp(){
     echo "                            "
     echo "1. 【推荐】 fscarmen"
     echo "2. fscarmen-docker"
-    echo "3. kkkyg（甬哥）"
-    echo "4. P3TERX"
+    echo "3. fscarmen warp解锁奈飞流媒体脚本"
+    echo "4. kkkyg（甬哥）"
+    echo "5. P3TERX"
     echo "                            "
     echo "0. 返回主菜单"
     read -p "请输入选项:" warpNumberInput
     case "$warpNumberInput" in
         1 ) wget -N https://cdn.jsdelivr.net/gh/fscarmen/warp/menu.sh && bash menu.sh ;;
         2 ) wget -N https://cdn.jsdelivr.net/gh/fscarmen/warp/docker.sh && bash docker.sh ;;
+        3 ) bash <(curl -sSL https://raw.githubusercontent.com/fscarmen/warp_unlock/main/unlock.sh) ;;
         3 ) wget -N https://cdn.jsdelivr.net/gh/kkkyg/CFwarp/CFwarp.sh && bash CFwarp.sh ;;
         4 ) bash <(curl -fsSL git.io/warp.sh) ;;
         0 ) menu
@@ -142,6 +144,11 @@ function dockerInstall(){
 
 function acmesh(){
     wget -N https://cdn.jsdelivr.net/gh/Misaka-blog/acme-1key@master/acme1key.sh && chmod -R 777 acme1key.sh && bash acme1key.sh
+}
+
+function dns64server(){
+    echo -e "nameserver 2001:67c:2b0::4\nnameserver 2001:67c:2b0::6" > /etc/resolv.conf
+    yellow "设置DNS64服务器完成"
 }
 
 # 第二页
@@ -185,6 +192,10 @@ function qlPanel(){
     else
         green "IPv6访问地址为：http://[$WAN6]:5700"
     fi
+}
+
+function trojanpanel(){
+    source <(curl -sL https://git.io/trojan-install)
 }
 
 # 第三页
@@ -322,9 +333,10 @@ function page1(){
     echo "3. 修改登录方式为 root + 密码 登录"
     echo "4. Screen 后台任务管理"
     echo "5. 开启BBR"
-    echo "6. 启用WARP"
-    echo "7. 安装docker"
-    echo "8. Acme.sh 证书申请脚本"
+    echo "6. 设置DNS64服务器"
+    echo "7. 安装WARP"
+    echo "8. 安装docker"
+    echo "9. Acme.sh 证书申请脚本"
     echo "                            "
     echo "0. 返回主菜单"
     read -p "请输入选项:" page1NumberInput
@@ -334,9 +346,10 @@ function page1(){
         3 ) rootLogin ;;
         4 ) screenManager ;;
         5 ) bbr ;;
-        6 ) warp ;;
-        7 ) dockerInstall ;;
-        8 ) acmesh ;;
+        6 ) dns64server ;;
+        7 ) warp ;;
+        8 ) dockerInstall ;;
+        9 ) acmesh ;;
         0 ) menu
     esac
 }
@@ -350,6 +363,7 @@ function page2(){
     echo "3. 安装aria2面板"
     echo "4. 安装CyberPanel面板"
     echo "5. 安装青龙面板"
+    echo "6. 安装Trojan面板"
     echo "                            "
     echo "0. 返回主菜单"
     read -p "请输入选项:" page2NumberInput
@@ -359,6 +373,7 @@ function page2(){
         3 ) aria2 ;;
         4 ) cyberpanel ;;
         5 ) qlPanel ;;
+        6 ) trojanpanel ;;
         0 ) menu
     esac
 }
