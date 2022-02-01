@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # 全局变量
-ver="2.0.9"
-changeLog="增加Trojan面板，fscarmen的warp流媒体解锁脚本"
+ver="2.1.0"
+changeLog="2022新年快乐！增加V2ray.Fun面板，集成修改root+密码脚本"
 arch=`uname -m`
 virt=`systemd-detect-virt`
 kernelVer=`uname -r`
@@ -93,7 +93,14 @@ function euservDig9(){
 }
 
 function rootLogin(){
-    wget -N https://cdn.jsdelivr.net/gh/Misaka-blog/rootLogin@master/root.sh && chmod -R 777 root.sh && bash root.sh
+    read -p "请输入需要设置的root密码:" password
+    echo root:$password | sudo chpasswd root
+    sudo sed -i 's/^#\?PermitRootLogin.*/PermitRootLogin yes/g' /etc/ssh/sshd_config;
+    sudo sed -i 's/^#\?PasswordAuthentication.*/PasswordAuthentication yes/g' /etc/ssh/sshd_config;
+    sudo service sshd restart
+    green "用户名：root"
+    green "密码：$password"
+    yellow "请妥善保管好登录信息！然后重启VPS确保设置已保存！"
 }
 
 function screenManager(){
@@ -364,6 +371,7 @@ function page2(){
     echo "4. 安装CyberPanel面板"
     echo "5. 安装青龙面板"
     echo "6. 安装Trojan面板"
+    echo "7. 安装V2ray.Fun面板"
     echo "                            "
     echo "0. 返回主菜单"
     read -p "请输入选项:" page2NumberInput
@@ -374,6 +382,7 @@ function page2(){
         4 ) cyberpanel ;;
         5 ) qlPanel ;;
         6 ) trojanpanel ;;
+        7 ) wget -N --no-check-certificate https://raw.githubusercontents.com/FunctionClub/V2ray.Fun/master/install.sh && bash install.sh ;;
         0 ) menu
     esac
 }
