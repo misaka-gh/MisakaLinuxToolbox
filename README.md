@@ -23,6 +23,8 @@ wget -N https://cdn.jsdelivr.net/gh/Misaka-blog/MisakaLinuxToolbox@master/Misaka
 
 ## 来自姐姐大人的更新日志
 
+Ver 2.1.1 增加misakabench测试脚本
+
 Ver 2.1.0 2022新年快乐！增加V2ray.Fun面板，集成修改root+密码脚本
 
 Ver 2.0.9 增加Trojan面板，fscarmen的warp流媒体解锁脚本
