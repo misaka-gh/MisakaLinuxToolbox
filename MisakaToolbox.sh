@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # 全局变量
-ver="2.1.0"
-changeLog="2022新年快乐！增加V2ray.Fun面板，集成修改root+密码脚本"
+ver="2.1.1"
+changeLog="增加misakabench测试脚本"
 arch=`uname -m`
 virt=`systemd-detect-virt`
 kernelVer=`uname -r`
@@ -235,16 +235,18 @@ function vpsBench(){
     echo "                            "
     green "请选择你接下来使用的脚本"
     echo "                            "
-    echo "1. 使用bench.sh"
+    echo "1. 使用misakabench"
+    echo "2. 使用bench.sh"
     echo "2. 使用superbench"
     echo "3. 使用lemonbench"
     echo "                            "
     echo "0. 返回主菜单"
     read -p "请输入选项:" page3NumberInput
     case "$page3NumberInput" in
-        1 ) wget -qO- bench.sh | bash ;;
-        2 ) wget -qO- --no-check-certificate https://raw.githubusercontents.com/oooldking/script/master/superbench.sh | bash ;;
-        3 ) curl -fsL https://ilemonra.in/LemonBenchIntl | bash -s fast ;;
+        1 ) bash <(curl -Lso- https://cdn.jsdelivr.net/gh/Misaka-blog/misakabench@master/misakabench.sh)
+        2 ) wget -qO- bench.sh | bash ;;
+        3 ) wget -qO- --no-check-certificate https://raw.githubusercontents.com/oooldking/script/master/superbench.sh | bash ;;
+        4 ) curl -fsL https://ilemonra.in/LemonBenchIntl | bash -s fast ;;
         0 ) menu
     esac
 }
