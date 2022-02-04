@@ -243,7 +243,7 @@ function vpsBench(){
     echo "0. 返回主菜单"
     read -p "请输入选项:" page3NumberInput
     case "$page3NumberInput" in
-        1 ) bash <(curl -Lso- https://cdn.jsdelivr.net/gh/Misaka-blog/misakabench@master/misakabench.sh)
+        1 ) bash <(curl -Lso- https://cdn.jsdelivr.net/gh/Misaka-blog/misakabench@master/misakabench.sh) ;;
         2 ) wget -qO- bench.sh | bash ;;
         3 ) wget -qO- --no-check-certificate https://raw.githubusercontents.com/oooldking/script/master/superbench.sh | bash ;;
         4 ) curl -fsL https://ilemonra.in/LemonBenchIntl | bash -s fast ;;
