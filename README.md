@@ -23,6 +23,8 @@ wget -N https://cdn.jsdelivr.net/gh/Misaka-blog/MisakaLinuxToolbox@master/Misaka
 
 ## 来自姐姐大人的更新日志
 
+Ver 2.1.3 由于网络跳跃跑路，故将他的脚本替代为Misaka-blog的修复版
+
 Ver 2.1.2 增加CloudFlare Argo Tunnel一键脚本
 
 Ver 2.1.1 增加misakabench测试脚本
