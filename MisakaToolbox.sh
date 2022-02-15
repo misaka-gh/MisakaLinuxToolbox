@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # 全局变量
-ver="2.1.2"
-changeLog="增加CloudFlare Argo Tunnel一键脚本"
+ver="2.1.3"
+changeLog="由于网络跳跃跑路，故将他的脚本替代为Misaka-blog的修复版"
 arch=`uname -m`
 virt=`systemd-detect-virt`
 kernelVer=`uname -r`
@@ -210,8 +210,8 @@ boy233(){
     bash <(curl -s -L https://git.io/v2ray.sh)
 }
 
-hijk(){
-    bash <(curl -sL https://raw.githubusercontents.com/hijkpw/scripts/master/xray.sh)
+misakaXray(){
+    bash <(curl -sL https://cdn.jsdelivr.net/gh/Misaka-blog/Xray-script@master/xray.sh)
 }
 
 tgMTProxy(){
@@ -391,7 +391,7 @@ page3(){
     echo "                            "
     echo "1. 使用Mack-a的脚本"
     echo "2. 使用233boy的脚本"
-    echo "3. 使用hijk的脚本"
+    echo "3. 使用Misaka Xray的脚本"
     echo "4. 搭建Telegram MTProxy代理"
     echo "5. 使用Teddysun脚本搭建ShadowSocks"
     echo "                            "
@@ -400,7 +400,7 @@ page3(){
     case "$page3NumberInput" in
         1 ) macka ;;
         2 ) boy233 ;;
-        3 ) hijk ;;
+        3 ) misakaXray ;;
         4 ) tgMTProxy ;;
         5 ) shadowsocks ;;
         0 ) menu
