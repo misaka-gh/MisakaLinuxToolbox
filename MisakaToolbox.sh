@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # 全局变量
-ver="2.1.3"
-changeLog="由于网络跳跃跑路，故将他的脚本替代为Misaka-blog的修复版"
+ver="2.1.4"
+changeLog="修改更新源为GitLab以规避GitHub无故封号"
 arch=`uname -m`
 virt=`systemd-detect-virt`
 kernelVer=`uname -r`
@@ -322,7 +322,7 @@ menu(){
         4 ) page4 ;;
         5 ) page5 ;;
         6 ) wget --no-check-certificate -qO ~/Network-Reinstall-System-Modify.sh 'https://www.cxthhhhh.com/CXT-Library/Network-Reinstall-System-Modify/Network-Reinstall-System-Modify.sh' && chmod a+x ~/Network-Reinstall-System-Modify.sh && bash ~/Network-Reinstall-System-Modify.sh -UI_Options ;;
-        9 ) wget -N https://raw.githubusercontents.com/Misaka-blog/MisakaLinuxToolbox/master/MisakaToolbox.sh && chmod -R 777 MisakaToolbox.sh && bash MisakaToolbox.sh ;;
+        9 ) wget -N https://gitlab.com/misakano7545/MisakaLinuxToolbox/-/raw/master/MisakaToolbox.sh && chmod -R 777 MisakaToolbox.sh && bash MisakaToolbox.sh ;;
         0 ) exit 0
     esac
 }
