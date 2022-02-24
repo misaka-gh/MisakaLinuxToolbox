@@ -114,3 +114,11 @@ lemonbench https://blog.ilemonrain.com/linux/LemonBench.html
 DD系统：https://www.cxthhhhh.com/network-reinstall-system-modify
 
 青龙面板：https://github.com/whyour/qinglong
+
+## 防和谐备份仓库
+
+GitHub：https://github.com/Misaka-blog/MisakaLinuxToolbox/
+
+BitBucket：https://bitbucket.org/misakano7545/misakalinuxtoolbox/
+
+GitLab：https://gitlab.com/misakano7545/MisakaLinuxToolbox
