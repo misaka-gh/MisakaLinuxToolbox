@@ -23,6 +23,8 @@ wget -N https://cdn.jsdelivr.net/gh/Misaka-blog/MisakaLinuxToolbox@master/Misaka
 
 ## 来自姐姐大人的更新日志
 
+Ver 2.1.5 新增放开VPS所有网络端口选项
+
 Ver 2.1.4 修改更新源为GitLab以规避GitHub无故封号
 
 Ver 2.1.3 由于网络跳跃跑路，故将他的脚本替代为Misaka-blog的修复版
