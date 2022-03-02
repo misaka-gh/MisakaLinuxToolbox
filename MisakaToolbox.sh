@@ -350,7 +350,7 @@ page1() {
 	green "请选择你接下来的操作"
 	echo "                            "
 	echo "1. Oracle Cloud原生系统关闭防火墙"
-    echo "2. 开启VPS中所有的网络带端口"
+        echo "2. 开启VPS中所有的网络端口"
 	echo "3. 德鸡DiG9正常访问网络解决方案"
 	echo "4. 修改登录方式为 root + 密码 登录"
 	echo "5. Screen 后台任务管理"
