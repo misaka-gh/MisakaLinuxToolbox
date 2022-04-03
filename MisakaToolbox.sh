@@ -2,7 +2,7 @@
 
 # 全局变量
 ver="2.1.7"
-changeLog="wARP处新增Misaka-WARP脚本"
+changeLog="WARP处新增Misaka-WARP脚本"
 arch=$(uname -m)
 virt=$(systemd-detect-virt)
 kernelVer=$(uname -r)
