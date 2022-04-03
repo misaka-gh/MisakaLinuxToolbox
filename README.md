@@ -23,6 +23,8 @@ wget -N https://raw.githubusercontents.com/Misaka-blog/MisakaLinuxToolbox/master
 
 ## 来自姐姐大人的更新日志
 
+Ver 2.1.7 WARP处新增Misaka-WARP脚本
+
 Ver 2.1.6 新增Ngrok脚本
 
 Ver 2.1.5 新增放开VPS所有网络端口选项
