@@ -81,7 +81,7 @@ Ver 1.1: 添加BBR及宝塔开心版、Docker安装脚本
 
 感谢他们的贡献，让脚本得到进一步完善
 
-BBR(KVM)：https://raw.githubusercontent.com/ylx2016/Linux-NetSpeed
+BBR(KVM)：https://github.com/ylx2016/Linux-NetSpeed
 
 BBR(OpenVZ)：https://github.com/mzz2017/lkl-haproxy/
 
