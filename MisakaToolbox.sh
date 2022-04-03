@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # 全局变量
-ver="2.1.6"
-changeLog="新增Ngrok脚本"
+ver="2.1.7"
+changeLog="wARP处新增Misaka-WARP脚本"
 arch=$(uname -m)
 virt=$(systemd-detect-virt)
 kernelVer=$(uname -r)
@@ -45,8 +45,8 @@ ${PACKAGE_UPDATE[int]}
 ${PACKAGE_INSTALL[int]} curl wget sudo
 
 # 获取IP地址及其信息
-IP4=$(curl -s4m2 https://ip.gs/json)
-IP6=$(curl -s6m2 https://ip.gs/json)
+IP4=$(curl -s4m8 https://ip.gs/json)
+IP6=$(curl -s6m8 https://ip.gs/json)
 WAN4=$(expr "$IP4" : '.*ip\":\"\([^"]*\).*')
 WAN6=$(expr "$IP6" : '.*ip\":\"\([^"]*\).*')
 COUNTRY4=$(expr "$IP4" : '.*country\":\"\([^"]*\).*')
@@ -65,7 +65,7 @@ if [ -z $WAN6 ]; then
 fi
 
 # 获取脚本运行次数
-COUNT=$(curl -sm2 "https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fcdn.jsdelivr.net%2Fgh%2FMisaka-blog%2FMisakaLinuxToolbox%40master%2FMisakaToolbox.sh&count_bg=%2379C83D&title_bg=%23555555&icon=&icon_color=%23E7E7E7&title=hits&edge_flat=false" 2>&1) &&
+COUNT=$(curl -sm8 "https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fcdn.jsdelivr.net%2Fgh%2FMisaka-blog%2FMisakaLinuxToolbox%40master%2FMisakaToolbox.sh&count_bg=%2379C83D&title_bg=%23555555&icon=&icon_color=%23E7E7E7&title=hits&edge_flat=false" 2>&1) &&
 TODAY=$(expr "$COUNT" : '.*\s\([0-9]\{1,\}\)\s/.*')
 TOTAL=$(expr "$COUNT" : '.*/\s\([0-9]\{1,\}\)\s.*')
 
@@ -143,18 +143,20 @@ warp() {
 	echo "                            "
 	green "请选择你接下来使用的脚本"
 	echo "                            "
-	echo "1. 【推荐】 fscarmen"
-	echo "2. fscarmen-docker"
-	echo "3. fscarmen warp解锁奈飞流媒体脚本"
-	echo "4. P3TERX"
+	echo "1. Misaka-WARP"
+	echo "2. fscarmen"
+	echo "3. fscarmen-docker"
+	echo "4. fscarmen warp解锁奈飞流媒体脚本"
+	echo "5. P3TERX"
 	echo "                            "
 	echo "0. 返回主菜单"
 	read -p "请输入选项:" warpNumberInput
 	case "$warpNumberInput" in
-        1) wget -N https://cdn.jsdelivr.net/gh/fscarmen/warp/menu.sh && bash menu.sh ;;
-        2) wget -N https://cdn.jsdelivr.net/gh/fscarmen/warp/docker.sh && bash docker.sh ;;
-        3) bash <(curl -sSL https://raw.githubusercontent.com/fscarmen/warp_unlock/main/unlock.sh) ;;
-        4) bash <(curl -fsSL git.io/warp.sh) ;;
+		1) wget -N https://raw.githubusercontents.com/Misaka-blog/Misaka-WARP-Script/master/misakawarp.sh && bash misakawarp.sh ;;
+        2) wget -N https://cdn.jsdelivr.net/gh/fscarmen/warp/menu.sh && bash menu.sh ;;
+        3) wget -N https://cdn.jsdelivr.net/gh/fscarmen/warp/docker.sh && bash docker.sh ;;
+        4) bash <(curl -sSL https://raw.githubusercontent.com/fscarmen/warp_unlock/main/unlock.sh) ;;
+        5) bash <(curl -fsSL git.io/warp.sh) ;;
         0) menu ;;
 	esac
 }
@@ -301,6 +303,10 @@ serverstatus() {
 	esac
 }
 
+ddsystem(){
+	wget --no-check-certificate -O ~/Network-Reinstall-System-Modify.sh 'https://www.cxthhhhh.com/CXT-Library/Network-Reinstall-System-Modify/Network-Reinstall-System-Modify.sh' && chmod +x ~/Network-Reinstall-System-Modify.sh && bash ~/Network-Reinstall-System-Modify.sh -UI_Options
+}
+
 # 菜单
 menu() {
 	clear
@@ -344,7 +350,7 @@ menu() {
         3) page3 ;;
         4) page4 ;;
         5) page5 ;;
-        6) wget --no-check-certificate -qO ~/Network-Reinstall-System-Modify.sh 'https://www.cxthhhhh.com/CXT-Library/Network-Reinstall-System-Modify/Network-Reinstall-System-Modify.sh' && chmod a+x ~/Network-Reinstall-System-Modify.sh && bash ~/Network-Reinstall-System-Modify.sh -UI_Options ;;
+        6) ddsystem ;;
         9) wget -N https://gitlab.com/misakano7545/MisakaLinuxToolbox/-/raw/master/MisakaToolbox.sh && chmod -R 777 MisakaToolbox.sh && bash MisakaToolbox.sh ;;
         0) exit 0 ;;
 	esac
