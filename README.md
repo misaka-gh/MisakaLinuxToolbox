@@ -12,18 +12,16 @@
 wget -N https://raw.githubusercontents.com/Misaka-blog/MisakaLinuxToolbox/master/MisakaToolbox.sh && chmod -R 777 MisakaToolbox.sh && bash MisakaToolbox.sh
 ```
 
-快捷方式 `bash MisakaToolbox.sh`
+第一次运行以后，可用快捷方式 `bash MisakaToolbox.sh`启动
 
-## 赞助我们
 
-![afdian-MisakaNo.jpg](https://s2.loli.net/2021/12/25/SimocqwhVg89NQJ.jpg)
 
-## 交流群
-[Telegram](https://t.me/misakanetcn)
 
 ## 来自姐姐大人的更新日志
 
 Ver 2.1.7 WARP处新增Misaka-WARP脚本
+<details>
+    <summary>历史更新记录（点击展开）</summary>
 
 Ver 2.1.6 新增Ngrok脚本
 
@@ -78,10 +76,13 @@ Ver 1.3: 添加可乐的ServerStatus-Horatu探针管理及客户端
 Ver 1.2: 添加流媒体检测，三网测速脚本
 
 Ver 1.1: 添加BBR及宝塔开心版、Docker安装脚本
+</details>
 
 ## 感谢列表
 
 感谢他们的贡献，让脚本得到进一步完善
+<details>
+    <summary>点击展开</summary>
 
 BBR(KVM)：https://github.com/ylx2016/Linux-NetSpeed
 
@@ -123,6 +124,15 @@ DD系统：https://www.cxthhhhh.com/network-reinstall-system-modify
 
 青龙面板：https://github.com/whyour/qinglong
 
+</details>  
+
+## 赞助我们
+
+![afdian-MisakaNo.jpg](https://s2.loli.net/2021/12/25/SimocqwhVg89NQJ.jpg)
+
+## Telegram交流群
+[Telegram](https://t.me/misakanetcn)
+
 ## 防和谐备份仓库
 
 GitHub：https://github.com/Misaka-blog/MisakaLinuxToolbox/
@@ -130,3 +140,11 @@ GitHub：https://github.com/Misaka-blog/MisakaLinuxToolbox/
 BitBucket：https://bitbucket.org/misakano7545/misakalinuxtoolbox/
 
 GitLab：https://gitlab.com/misakano7545/MisakaLinuxToolbox
+
+
+## Stars 增长记录
+
+[![Stargazers over time](https://starchart.cc/Misaka-blog/MisakaLinuxToolbox.svg)](https://starchart.cc/Misaka-blog/MisakaLinuxToolbox)
+
+## Repo 统计
+![Alt](https://repobeats.axiom.co/api/embed/2512c745cf3ee94ad15c8e8ada474469e081f1c4.svg "Repobeats analytics image")
