@@ -130,7 +130,7 @@ DD系统：https://www.cxthhhhh.com/network-reinstall-system-modify
 
 ![afdian-MisakaNo.jpg](https://s2.loli.net/2021/12/25/SimocqwhVg89NQJ.jpg)
 
-## Telegram交流群
+## 交流群
 [Telegram](https://t.me/misakanetcn)
 
 ## 防和谐备份仓库
