@@ -152,3 +152,7 @@ GitLab：https://gitlab.com/misakano7545/MisakaLinuxToolbox
 
 ## Repo 统计
 ![Alt](https://repobeats.axiom.co/api/embed/2512c745cf3ee94ad15c8e8ada474469e081f1c4.svg "Repobeats analytics image")
+
+## License
+GNU General Public License v3.0
+https://www.gnu.org/licenses/gpl-3.0.html
