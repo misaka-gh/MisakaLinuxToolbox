@@ -15,8 +15,6 @@ wget -N https://raw.githubusercontents.com/Misaka-blog/MisakaLinuxToolbox/master
 第一次运行以后，可用快捷方式 `bash MisakaToolbox.sh`启动
 
 
-
-
 ## 来自姐姐大人的更新日志
 
 Ver 2.1.7 WARP处新增Misaka-WARP脚本
@@ -128,7 +126,7 @@ DD系统：https://www.cxthhhhh.com/network-reinstall-system-modify
 
 ## 赞助我们
 
-点击页面上方的Sponsor按钮，赞助我们！
+点击页面上方的Sponsor按钮，赞助我们！  
 你的赞助会帮助工具箱变得更完善！
 
 ## 交流群
