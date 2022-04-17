@@ -183,8 +183,6 @@ ngrokScript() {
 }
 
 setlanguage(){
-  mkdir /root/.trojan/
-  mkdir /etc/certs/
   chattr -i /etc/locale.gen
   cat > '/etc/locale.gen' << EOF
 zh_CN.UTF-8 UTF-8
