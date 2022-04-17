@@ -413,7 +413,7 @@ page1() {
 	12) ngrokScript ;;
 	13) lxcovztun ;;
 	14) bash <(curl -sSL https://cdn.jsdelivr.net/gh/SuperManito/LinuxMirrors@main/ChangeMirrors.sh) ;;
-	15) setlanguage
+	15) setlanguage ;;
 	0) menu ;;
 	esac
 }
