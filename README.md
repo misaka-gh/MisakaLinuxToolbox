@@ -128,6 +128,7 @@ DD系统：https://www.cxthhhhh.com/network-reinstall-system-modify
 
 青龙面板：https://github.com/whyour/qinglong
 
+更换系统语言：https://github.com/johnrosen1/vpstoolbox
 </details>  
 
 ## 赞助我们
