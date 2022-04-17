@@ -21,10 +21,11 @@ wget -N https://raw.githubusercontents.com/Misaka-blog/MisakaLinuxToolbox/master
 开发者们看到后会尽快添加~
 
 ## 来自姐姐大人的更新日志
+Ver 2.1.8 新增设置中文语言选项和一键换源脚本
 
-Ver 2.1.7 WARP处新增Misaka-WARP脚本
 <details>
     <summary>历史更新记录（点击展开）</summary>
+Ver 2.1.7 WARP处新增Misaka-WARP脚本
 
 Ver 2.1.6 新增Ngrok脚本
 
