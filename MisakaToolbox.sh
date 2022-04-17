@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # 全局变量
-ver="2.1.7"
-changeLog="WARP处新增Misaka-WARP脚本"
+ver="2.1.8"
+changeLog="新增设置中文语言选项和一键换源脚本"
 arch=$(uname -m)
 virt=$(systemd-detect-virt)
 kernelVer=$(uname -r)
@@ -182,6 +182,28 @@ ngrokScript() {
 	wget -N https://raw.githubusercontents.com/Misaka-blog/Ngrok-1key/master/ngrok.sh && bash ngrok.sh
 }
 
+setlanguage(){
+  mkdir /root/.trojan/
+  mkdir /etc/certs/
+  chattr -i /etc/locale.gen
+  cat > '/etc/locale.gen' << EOF
+zh_CN.UTF-8 UTF-8
+zh_TW.UTF-8 UTF-8
+en_US.UTF-8 UTF-8
+ja_JP.UTF-8 UTF-8
+EOF
+locale-gen
+update-locale
+chattr -i /etc/default/locale
+  cat > '/etc/default/locale' << EOF
+LANGUAGE="zh_CN.UTF-8"
+LANG="zh_CN.UTF-8"
+LC_ALL="zh_CN.UTF-8"
+EOF
+export LANGUAGE="zh_CN.UTF-8"
+export LANG="zh_CN.UTF-8"
+export LC_ALL="zh_CN.UTF-8"
+}
 # 第二页
 bt() {
 	if [ $SYSTEM = "CentOS" ]; then
@@ -374,6 +396,7 @@ page1() {
 	echo "12. Ngrok 内网穿透一键脚本"
 	echo "13. LXC/OVZ VPS打开TUN模块"
 	echo "14. 更换Linux软件源"
+	echo "15. 更换系统语言为中文"
 	echo "                            "
 	echo "0. 返回主菜单"
 	read -p "请输入选项:" page1NumberInput
@@ -392,6 +415,7 @@ page1() {
 	12) ngrokScript ;;
 	13) lxcovztun ;;
 	14) bash <(curl -sSL https://cdn.jsdelivr.net/gh/SuperManito/LinuxMirrors@main/ChangeMirrors.sh) ;;
+	15）setlanguage
 	0) menu ;;
 	esac
 }
