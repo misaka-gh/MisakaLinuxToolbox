@@ -371,7 +371,7 @@ menu() {
 	4) page4 ;;
 	5) page5 ;;
 	6) ddsystem ;;
-	9) wget -N https://cdn.jsdelivr.net/gh/Misaka-blog/MisakaLinuxToolbox@master/MisakaToolbox.sh && chmod -R 777 MisakaToolbox.sh && bash MisakaToolbox.sh ;;
+	9) wget -N --no-check-certificate https://raw.githubusercontents.com/Misaka-blog/MisakaLinuxToolbox/master/MisakaToolbox.sh && chmod -R 777 MisakaToolbox.sh && bash MisakaToolbox.sh ;;
 	0) exit 0 ;;
 	esac
 }
