@@ -155,5 +155,5 @@ GitLab：https://gitlab.com/misakano7545/MisakaLinuxToolbox
 ![Alt](https://repobeats.axiom.co/api/embed/2512c745cf3ee94ad15c8e8ada474469e081f1c4.svg "Repobeats analytics image")
 
 ## License
-GNU General Public License v3.0
-https://www.gnu.org/licenses/gpl-3.0.html
+GNU General Public License v3.0  
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FMisaka-blog%2FMisakaLinuxToolbox.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2FMisaka-blog%2FMisakaLinuxToolbox?ref=badge_large)
