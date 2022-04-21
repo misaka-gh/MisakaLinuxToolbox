@@ -11,10 +11,6 @@
 ```shell
 wget -N --no-check-certificate https://raw.githubusercontent.com/Misaka-blog/MisakaLinuxToolbox/master/MisakaToolbox.sh && chmod -R 777 MisakaToolbox.sh && bash MisakaToolbox.sh
 ```
-测试版：
-```shell
-wget -N --no-check-certificate https://raw.githubusercontent.com/Misaka-blog/MisakaLinuxToolbox/dev/MisakaToolbox.sh && chmod -R 777 MisakaToolbox.sh && bash MisakaToolbox.sh
-```
 第一次运行以后，可用快捷方式 `bash MisakaToolbox.sh`启动
 
 ## 工具箱功能提议
