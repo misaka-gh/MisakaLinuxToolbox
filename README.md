@@ -7,6 +7,8 @@
 ![image.png](https://s2.loli.net/2021/12/26/WkiwbdExvnGAXCh.png)
 
 ## 使用方法
+0. 给这个项目一个Star
+1. 用SSH客户端连接上VPS，输入以下命令（若不是root用户请先`sudo -i`提权）
 ```shell
 wget -N --no-check-certificate https://raw.githubusercontent.com/Misaka-blog/MisakaLinuxToolbox/master/MisakaToolbox.sh && chmod -R 777 MisakaToolbox.sh && bash MisakaToolbox.sh
 ```
