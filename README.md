@@ -158,4 +158,3 @@ GitLab：https://gitlab.com/misakano7545/MisakaLinuxToolbox
 
 ## License
 GNU General Public License v3.0  
-[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FMisaka-blog%2FMisakaLinuxToolbox.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2FMisaka-blog%2FMisakaLinuxToolbox?ref=badge_large)
