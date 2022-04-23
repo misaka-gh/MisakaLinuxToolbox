@@ -144,11 +144,9 @@ DD系统：https://www.cxthhhhh.com/network-reinstall-system-modify
 
 GitHub：https://github.com/Misaka-blog/MisakaLinuxToolbox/
 
-BitBucket：https://bitbucket.org/misakano7545/misakalinuxtoolbox/
-
 GitLab：https://gitlab.com/misakano7545/MisakaLinuxToolbox
 
-
+BitBucket：https://bitbucket.org/misakano7545/misakalinuxtoolbox/
 ## Stars 增长记录
 
 [![Stargazers over time](https://starchart.cc/Misaka-blog/MisakaLinuxToolbox.svg)](https://starchart.cc/Misaka-blog/MisakaLinuxToolbox)
