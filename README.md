@@ -4,7 +4,7 @@
 
 虽然目前我给你们一键管理的功能并不多，但是我有时间还是给你们准备的啦！
 
-![](https://i0.hdslb.com/bfs/album/b009275d376e464153ea5f1e0ca69bd29e624e9d.png)
+![image.png](https://s2.loli.net/2021/12/26/WkiwbdExvnGAXCh.png)
 
 ## 使用方法
 0. 给这个项目一个Star
