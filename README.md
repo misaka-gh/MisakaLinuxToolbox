@@ -162,5 +162,11 @@ BitBucket：https://bitbucket.org/misakano7545/misakalinuxtoolbox/
 ## Repo 统计
 ![Alt](https://repobeats.axiom.co/api/embed/2512c745cf3ee94ad15c8e8ada474469e081f1c4.svg "Repobeats analytics image")
 
+## 贡献者
+<a href="https://github.com/Misaka-blog/MisakaLinuxToolbox/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=Misaka-blog/MisakaLinuxToolbox" />
+</a>
+
+Made with [contrib.rocks](https://contrib.rocks).
 ## License
 GNU General Public License v3.0  
