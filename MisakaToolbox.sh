@@ -485,6 +485,7 @@ page4() {
 	echo "1. VPS测试"
 	echo "2. 流媒体检测"
 	echo "3. VPS三网测速"
+	echo "4. 路由测试"
 	echo "                            "
 	echo "0. 返回主菜单"
 	read -p "请输入选项:" page4NumberInput
@@ -492,6 +493,7 @@ page4() {
 		1) vpsBench ;;
 		2) mediaUnblockTest ;;
 		3) speedTest ;;
+		4) curl https://raw.githubusercontent.com/zhucaidan/mtr_trace/main/mtr_trace.sh|bash ;;
 		0) menu ;;
 	esac
 }
