@@ -16,7 +16,11 @@ wget -N --no-check-certificate https://raw.githubusercontents.com/Misaka-blog/Mi
 ```shell
 wget -N --no-check-certificate https://gitee.com/Misaka-blog/MisakaLinuxToolbox/raw/master/MisakaToolbox.sh && bash MisakaToolbox.sh
 ```
-第一次运行以后，可用快捷方式 `bash MisakaToolbox.sh`启动
+第一次运行以后，可用快捷方式 
+```bash
+bash MisakaToolbox.sh
+```
+启动
 
 ## 工具箱功能提议
 
