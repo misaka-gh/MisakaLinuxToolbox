@@ -12,7 +12,7 @@
 ```shell
 wget -N --no-check-certificate https://raw.githubusercontents.com/Misaka-blog/MisakaLinuxToolbox/master/MisakaToolbox.sh && bash MisakaToolbox.sh
 ```
-国内特供版：(部分功能**无法使用**)
+~~国内特供版：(部分功能**无法使用**)~~（已经失效）
 ```shell
 wget -N --no-check-certificate https://gitee.com/Misaka-blog/MisakaLinuxToolbox/raw/master/MisakaToolbox.sh && bash MisakaToolbox.sh
 ```
