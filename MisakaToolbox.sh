@@ -308,7 +308,7 @@ mediaUnblockTest() {
 }
 
 speedTest() {
-	bash <(curl -Lso- https://git.io/superspeed)
+	bash <(curl -Lso- https://git.io/superspeed.sh)
 }
 
 # 第五页
