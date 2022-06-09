@@ -1,0 +1,32 @@
+name: Sync to Bitbucket and Gitlab
+
+on: 
+  push:
+  delete:
+  workflow_dispatch:
+
+jobs:
+  to_bitbucket:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - uses: pixta-dev/repository-mirroring-action@v1
+        with:
+          target_repo_url:
+            git@bitbucket.org:misakano7545/misakalinuxtoolbox.git
+          ssh_private_key:
+            ${{ secrets.SSH_PRIVATEKEY }}
+  to_gitlab:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - uses: pixta-dev/repository-mirroring-action@v1
+        with:
+          target_repo_url:
+            git@gitlab.com:misaka-blog/misakalinuxtoolbox.git
+          ssh_private_key:
+            ${{ secrets.SSH_PRIVATEKEY }}
