@@ -71,7 +71,7 @@ warp_script(){
     echo "5. P3TERX"
     echo "0. 返回主菜单"
     echo ""
-    read -p "请输入选项:" warpNumberInput
+    read -rp "请输入选项:" warpNumberInput
 	case $warpNumberInput in
         1) wget -N https://raw.githubusercontents.com/Misaka-blog/Misaka-WARP-Script/master/misakawarp.sh && bash misakawarp.sh ;;
         2) wget -N https://raw.githubusercontents.com/fscarmen/warp/main/menu.sh && bash menu.sh ;;
@@ -120,7 +120,7 @@ xui() {
     echo "2. 使用Misaka魔改版"
     echo "3. 使用FranzKafkaYu魔改版"
     echo "0. 返回主菜单"
-    read -p "请输入选项:" xuiNumberInput
+    read -rp "请输入选项:" xuiNumberInput
     case "$xuiNumberInput" in
         1) bash <(curl -Ls https://raw.githubusercontents.com/vaxilu/x-ui/master/install.sh) ;;
         2) wget -N --no-check-certificate https://raw.githubusercontents.com/Misaka-blog/x-ui/master/install.sh && bash install.sh ;;
@@ -131,8 +131,8 @@ xui() {
 
 qlpanel(){
     [[ -z $(docker -v 2>/dev/null) ]] && curl -fsSL https://get.docker.com | bash -s docker --mirror Aliyun
-    read -p "请输入将要安装的青龙面板容器名称：" qlPanelName
-    read -p "请输入外网访问端口：" qlHTTPPort
+    read -rp "请输入将要安装的青龙面板容器名称：" qlPanelName
+    read -rp "请输入外网访问端口：" qlHTTPPort
     docker run -dit --name $qlPanelName --hostname $qlPanelName --restart always -p $qlHTTPPort:5700 -v $PWD/QL/config:/ql/config -v $PWD/QL/log:/ql/log -v $PWD/QL/db:/ql/db -v $PWD/QL/scripts:/ql/scripts -v $PWD/QL/jbot:/ql/jbot whyour/qinglong:latest
     wg-quick down wgcf 2>/dev/null
     v66=`curl -s6m8 https://ip.gs -k`
@@ -148,6 +148,22 @@ qlpanel(){
     fi
     yellow "请稍等1-3分钟，等待青龙面板容器启动"
     wg-quick up wgcf 2>/dev/null
+}
+
+serverstatus() {
+    wget -N https://raw.githubusercontents.com/cokemine/ServerStatus-Hotaru/master/status.sh
+    echo "                            "
+    green "请选择你需要安装探针的客户端类型"
+    echo "1. 服务端"
+    echo "2. 监控端"
+    echo "0. 返回主页"
+    echo "                            "
+	read -rp "请输入选项:" menuNumberInput1
+    case "$menuNumberInput1" in
+        1) bash status.sh s ;;
+        2) bash status.sh c ;;
+        0) menu ;;
+    esac
 }
 
 menu(){
@@ -261,6 +277,7 @@ menu2(){
         4) sh <(curl https://cyberpanel.net/install.sh || wget -O - https://cyberpanel.net/install.sh) ;;
         5) qlpanel ;;
         6) source <(curl -sL https://git.io/trojan-install) ;;
+        0) menu ;;
         *) exit 1 ;;
     esac
 }
@@ -280,15 +297,24 @@ menu3(){
     echo ""
     echo -e " ${GREEN}1.${PLAIN} mack-a"
     echo -e " ${GREEN}2.${PLAIN} wulabing v2ray"
-    echo -e " ${GREEN}3.${PLAIN} wulabing xray"
-    echo -e " ${GREEN}4.${PLAIN} misaka xray"
-    echo -e " ${GREEN}5.${PLAIN} teddysun shadowsocks"
-    echo -e " ${GREEN}6.${PLAIN} telegram mtproxy"
+    echo -e " ${GREEN}3.${PLAIN} wulabing xray (Nginx前置)"
+    echo -e " ${GREEN}4.${PLAIN} wulabing xray (Xray前置)"
+    echo -e " ${GREEN}5.${PLAIN} misaka xray"
+    echo -e " ${GREEN}6.${PLAIN} teddysun shadowsocks"
+    echo -e " ${GREEN}7.${PLAIN} telegram mtproxy"
     echo " -------------"
     echo -e " ${GREEN}0.${PLAIN} 返回主菜单"
     echo ""
     read -rp " 请输入选项 [0-6]:" menuInput
     case $menuInput in
+        1) wget -P /root -N --no-check-certificate "https://raw.githubusercontents.com/mack-a/v2ray-agent/master/install.sh" && chmod 700 /root/install.sh && /root/install.sh ;;
+        2) wget -N --no-check-certificate -q -O install.sh "https://raw.githubusercontents.com/wulabing/V2Ray_ws-tls_bash_onekey/master/install.sh" && chmod +x install.sh && bash install.sh ;;
+        3) wget -N --no-check-certificate -q -O install.sh "https://raw.githubusercontents.com/wulabing/Xray_onekey/nginx_forward/install.sh" && chmod +x install.sh && bash install.sh ;;
+        4) wget -N --no-check-certificate -q -O install.sh "https://raw.githubusercontents.com/wulabing/Xray_onekey/main/install.sh" && chmod +x install.sh && bash install.sh ;;
+        5) wget -N --no-check-certificate https://raw.githubusercontents.com/Misaka-blog/Xray-script/master/xray.sh && bash xray.sh ;;
+        6) wget --no-check-certificate -O shadowsocks-all.sh https://raw.githubusercontents.com/teddysun/shadowsocks_install/master/shadowsocks-all.sh && chmod +x shadowsocks-all.sh && ./shadowsocks-all.sh 2>&1 | tee shadowsocks-all.log ;;
+        7) mkdir /home/mtproxy && cd /home/mtproxy && curl -s -o mtproxy.sh https://raw.githubusercontents.com/sunpma/mtp/master/mtproxy.sh && chmod +x mtproxy.sh && bash mtproxy.sh && bash mtproxy.sh start
+        0) menu ;;
         *) exit 1 ;;
     esac
 }
@@ -313,9 +339,19 @@ menu4(){
     echo -e " ${GREEN}5.${PLAIN} VPS测试 (融合怪全测)"
     echo -e " ${GREEN}6.${PLAIN} 流媒体检测"
     echo -e " ${GREEN}7.${PLAIN} 三网测速"
+    echo " -------------"
+    echo -e " ${GREEN}0.${PLAIN} 返回主菜单"
     echo ""
     read -rp " 请输入选项 [0-7]:" menuInput
     case $menuInput in
+        1) bash <(curl -Lso- https://cdn.jsdelivr.net/gh/Misaka-blog/misakabench@master/misakabench.sh) ;;
+        2) wget -qO- bench.sh | bash ;;
+        3) wget -qO- --no-check-certificate https://raw.githubusercontents.com/oooldking/script/master/superbench.sh | bash ;;
+        4) curl -fsL https://ilemonra.in/LemonBenchIntl | bash -s fast ;;
+        5) bash <(wget -qO- --no-check-certificate https://gitlab.com/spiritysdx/za/-/raw/main/ecs.sh) ;;
+        6) bash <(curl -L -s https://raw.githubusercontents.com/lmc999/RegionRestrictionCheck/main/check.sh) ;;
+        7) bash <(curl -Lso- https://git.io/superspeed.sh) ;;
+        0) menu ;;
         *) exit 1 ;;
     esac
 }
@@ -340,6 +376,8 @@ menu5(){
     echo ""
     read -rp " 请输入选项 [0-2]:" menuInput
     case $menuInput in
+        1) curl -L https://raw.githubusercontents.com/naiba/nezha/master/script/install.sh -o nezha.sh && chmod +x nezha.sh && bash nezha.sh ;;
+        0) menu ;;
         *) exit 1 ;;
     esac
 }
