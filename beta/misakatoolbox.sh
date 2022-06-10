@@ -294,7 +294,7 @@ menu(){
     check_status
     clear
     echo "#############################################################"
-    echo -e "#                 ${RED}Misaka Linux Toolbox${PLAIN}                     #"
+    echo -e "#                   ${RED}Misaka Linux Toolbox${PLAIN}                    #"
     echo -e "# ${GREEN}作者${PLAIN}: Misaka No                                           #"
     echo -e "# ${GREEN}网址${PLAIN}: https://owo.misaka.rest                             #"
     echo -e "# ${GREEN}论坛${PLAIN}: https://vpsgo.co                                    #"
@@ -340,7 +340,7 @@ menu(){
 menu1(){
     clear
     echo "#############################################################"
-    echo -e "#                 ${RED}Misaka Linux Toolbox${PLAIN}                     #"
+    echo -e "#                   ${RED}Misaka Linux Toolbox${PLAIN}                    #"
     echo -e "# ${GREEN}作者${PLAIN}: Misaka No                                           #"
     echo -e "# ${GREEN}网址${PLAIN}: https://owo.misaka.rest                             #"
     echo -e "# ${GREEN}论坛${PLAIN}: https://vpsgo.co                                    #"
@@ -388,7 +388,7 @@ menu1(){
 menu2(){
     clear
     echo "#############################################################"
-    echo -e "#                 ${RED}Misaka Linux Toolbox${PLAIN}                     #"
+    echo -e "#                   ${RED}Misaka Linux Toolbox${PLAIN}                    #"
     echo -e "# ${GREEN}作者${PLAIN}: Misaka No                                           #"
     echo -e "# ${GREEN}网址${PLAIN}: https://owo.misaka.rest                             #"
     echo -e "# ${GREEN}论坛${PLAIN}: https://vpsgo.co                                    #"
@@ -423,7 +423,7 @@ menu2(){
 menu3(){
     clear
     echo "#############################################################"
-    echo -e "#                 ${RED}Misaka Linux Toolbox${PLAIN}                     #"
+    echo -e "#                   ${RED}Misaka Linux Toolbox${PLAIN}                    #"
     echo -e "# ${GREEN}作者${PLAIN}: Misaka No                                           #"
     echo -e "# ${GREEN}网址${PLAIN}: https://owo.misaka.rest                             #"
     echo -e "# ${GREEN}论坛${PLAIN}: https://vpsgo.co                                    #"
@@ -460,7 +460,7 @@ menu3(){
 menu4(){
     clear
     echo "#############################################################"
-    echo -e "#                 ${RED}Misaka Linux Toolbox${PLAIN}                     #"
+    echo -e "#                   ${RED}Misaka Linux Toolbox${PLAIN}                    #"
     echo -e "# ${GREEN}作者${PLAIN}: Misaka No                                           #"
     echo -e "# ${GREEN}网址${PLAIN}: https://owo.misaka.rest                             #"
     echo -e "# ${GREEN}论坛${PLAIN}: https://vpsgo.co                                    #"
@@ -497,7 +497,7 @@ menu4(){
 menu5(){
     clear
     echo "#############################################################"
-    echo -e "#                 ${RED}Misaka Linux Toolbox${PLAIN}                     #"
+    echo -e "#                   ${RED}Misaka Linux Toolbox${PLAIN}                    #"
     echo -e "# ${GREEN}作者${PLAIN}: Misaka No                                           #"
     echo -e "# ${GREEN}网址${PLAIN}: https://owo.misaka.rest                             #"
     echo -e "# ${GREEN}论坛${PLAIN}: https://vpsgo.co                                    #"
