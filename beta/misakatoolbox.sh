@@ -17,6 +17,130 @@ yellow(){
     echo -e "\033[33m\033[01m$1\033[0m"
 }
 
+REGEX=("debian" "ubuntu" "centos|red hat|kernel|oracle linux|alma|rocky" "'amazon linux'")
+RELEASE=("Debian" "Ubuntu" "CentOS" "CentOS")
+PACKAGE_UPDATE=("apt-get update" "apt-get update" "yum -y update" "yum -y update")
+PACKAGE_INSTALL=("apt -y install" "apt -y install" "yum -y install" "yum -y install")
+PACKAGE_REMOVE=("apt -y remove" "apt -y remove" "yum -y remove" "yum -y remove")
+PACKAGE_UNINSTALL=("apt -y autoremove" "apt -y autoremove" "yum -y autoremove" "yum -y autoremove")
+
+CMD=("$(grep -i pretty_name /etc/os-release 2>/dev/null | cut -d \" -f2)" "$(hostnamectl 2>/dev/null | grep -i system | cut -d : -f2)" "$(lsb_release -sd 2>/dev/null)" "$(grep -i description /etc/lsb-release 2>/dev/null | cut -d \" -f2)" "$(grep . /etc/redhat-release 2>/dev/null)" "$(grep . /etc/issue 2>/dev/null | cut -d \\ -f1 | sed '/^[ ]*$/d')") 
+
+for i in "${CMD[@]}"; do
+    SYS="$i" 
+    if [[ -n $SYS ]]; then
+        break
+    fi
+done
+
+for ((int = 0; int < ${#REGEX[@]}; int++)); do
+    if [[ $(echo "$SYS" | tr '[:upper:]' '[:lower:]') =~ ${REGEX[int]} ]]; then
+        SYSTEM="${RELEASE[int]}"
+        if [[ -n $SYSTEM ]]; then
+            break
+        fi
+    fi
+done
+
+[[ $EUID -ne 0 ]] && red "注意：请在root用户下运行脚本" && exit 1
+[[ -z $SYSTEM ]] && red "不支持VPS的当前系统，请使用主流操作系统" && exit 1
+
+check_status(){
+    yellow "正在检查VPS系统状态..."
+    if [[ -z $(type -P curl) ]]; then
+        yellow "检测curl未安装，正在安装中..."
+        if [[ ! $SYSTEM == "CentOS" ]]; then
+            ${PACKAGE_UPDATE[int]}
+        fi
+        ${PACKAGE_INSTALL[int]} curl
+    fi
+    if [[ -z $(type -P sudo) ]]; then
+        yellow "检测sudo未安装，正在安装中..."
+        if [[ ! $SYSTEM == "CentOS" ]]; then
+            ${PACKAGE_UPDATE[int]}
+        fi
+        ${PACKAGE_INSTALL[int]} sudo
+    fi
+
+    IPv4Status=$(curl -s4m8 https://www.cloudflare.com/cdn-cgi/trace -k | grep warp | cut -d= -f2)
+    IPv6Status=$(curl -s6m8 https://www.cloudflare.com/cdn-cgi/trace -k | grep warp | cut -d= -f2)
+
+    if [[ $IPv4Status =~ "on"|"plus" ]] || [[ $IPv6Status =~ "on"|"plus" ]]; then
+        # 关闭Wgcf-WARP，以防识别有误
+        wg-quick down wgcf >/dev/null 2>&1
+        v66=`curl -s6m8 https://ip.gs -k`
+        v44=`curl -s4m8 https://ip.gs -k`
+        wg-quick up wgcf >/dev/null 2>&1
+    else
+        v66=`curl -s6m8 https://ip.gs -k`
+        v44=`curl -s4m8 https://ip.gs -k`
+    fi
+
+    if [[ $IPv4Status == "off" ]]; then
+        w4="${RED}未启用WARP${PLAIN}"
+    fi
+    if [[ $IPv6Status == "off" ]]; then
+        w6="${RED}未启用WARP${PLAIN}"
+    fi
+    if [[ $IPv4Status == "on" ]]; then
+        w4="${YELLOW}WARP 免费账户${PLAIN}"
+    fi
+    if [[ $IPv6Status == "on" ]]; then
+        w6="${YELLOW}WARP 免费账户${PLAIN}"
+    fi
+    if [[ $IPv4Status == "plus" ]]; then
+        w4="${GREEN}WARP+ / Teams${PLAIN}"
+    fi
+    if [[ $IPv6Status == "plus" ]]; then
+        w6="${GREEN}WARP+ / Teams${PLAIN}"
+    fi
+
+    # VPSIP变量说明：0为纯IPv6 VPS、1为纯IPv4 VPS、2为原生双栈VPS
+    if [[ -n $v66 ]] && [[ -z $v44 ]]; then
+        VPSIP=0
+    elif [[ -z $v66 ]] && [[ -n $v44 ]]; then
+        VPSIP=1
+    elif [[ -n $v66 ]] && [[ -n $v44 ]]; then
+        VPSIP=2
+    fi
+
+    v4=$(curl -s4m8 https://ip.gs -k)
+    v6=$(curl -s6m8 https://ip.gs -k)
+    c4=$(curl -s4m8 https://ip.gs/country -k)
+    c6=$(curl -s6m8 https://ip.gs/country -k)
+    s5p=$(warp-cli --accept-tos settings 2>/dev/null | grep 'WarpProxy on port' | awk -F "port " '{print $2}')
+    w5p=$(grep BindAddress /etc/wireguard/proxy.conf 2>/dev/null | sed "s/BindAddress = 127.0.0.1://g")
+    if [[ -n $s5p ]]; then
+        s5s=$(curl -sx socks5h://localhost:$s5p https://www.cloudflare.com/cdn-cgi/trace -k --connect-timeout 8 | grep warp | cut -d= -f2)
+        s5i=$(curl -sx socks5h://localhost:$s5p https://ip.gs -k --connect-timeout 8)
+        s5c=$(curl -sx socks5h://localhost:$s5p https://ip.gs/country -k --connect-timeout 8)
+    fi
+    if [[ -n $w5p ]]; then
+        w5s=$(curl -sx socks5h://localhost:$w5p https://www.cloudflare.com/cdn-cgi/trace -k --connect-timeout 8 | grep warp | cut -d= -f2)
+        w5i=$(curl -sx socks5h://localhost:$w5p https://ip.gs -k --connect-timeout 8)
+        w5c=$(curl -sx socks5h://localhost:$w5p https://ip.gs/country -k --connect-timeout 8)
+    fi
+
+    if [[ -z $s5s ]] || [[ $s5s == "off" ]]; then
+        s5="${RED}未启动${PLAIN}"
+    fi
+    if [[ -z $w5s ]] || [[ $w5s == "off" ]]; then
+        w5="${RED}未启动${PLAIN}"
+    fi
+    if [[ $s5s == "on" ]]; then
+        s5="${YELLOW}WARP 免费账户${PLAIN}"
+    fi
+    if [[ $w5s == "on" ]]; then
+        w5="${YELLOW}WARP 免费账户${PLAIN}"
+    fi
+    if [[ $s5s == "plus" ]]; then
+        s5="${GREEN}WARP+ / Teams${PLAIN}"
+    fi
+    if [[ $w5s == "plus" ]]; then
+        w5="${GREEN}WARP+ / Teams${PLAIN}"
+    fi
+}
+
 open_ports(){
     systemctl stop firewalld.service 2>/dev/null
     systemctl disable firewalld.service 2>/dev/null
@@ -168,6 +292,7 @@ serverstatus() {
 
 menu(){
     clear
+    check_status
     echo "#############################################################"
     echo -e "#                 ${RED}Misaka Linux Toolbox${PLAIN}                     #"
     echo -e "# ${GREEN}作者${PLAIN}: Misaka No                                           #"
@@ -187,6 +312,19 @@ menu(){
     echo " -------------"
     echo -e " ${GREEN}9.${PLAIN} 更新脚本"
     echo -e " ${GREEN}0.${PLAIN} 退出脚本"
+    echo ""
+    if [[ -n $v4 ]]; then
+        echo -e "IPv4 地址：$v4  地区：$c4  WARP状态：$w4"
+    fi
+    if [[ -n $v6 ]]; then
+        echo -e "IPv6 地址：$v6  地区：$c6  WARP状态：$w6"
+    fi
+    if [[ -n $w5p ]]; then
+        echo -e "WireProxy代理端口: 127.0.0.1:$w5p  WireProxy状态: $w5"
+        if [[ -n $w5i ]]; then
+            echo -e "WireProxy IP: $w5i  地区: $w5c"
+        fi
+    fi
     echo ""
     read -rp " 请输入选项 [0-9]:" menuInput
     case $menuInput in
