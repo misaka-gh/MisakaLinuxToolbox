@@ -291,8 +291,8 @@ serverstatus() {
 }
 
 menu(){
-    clear
     check_status
+    clear
     echo "#############################################################"
     echo -e "#                 ${RED}Misaka Linux Toolbox${PLAIN}                     #"
     echo -e "# ${GREEN}作者${PLAIN}: Misaka No                                           #"
