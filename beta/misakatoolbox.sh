@@ -1,5 +1,8 @@
 #!/bin/bash
 
+version="v3.0"
+version_log="重构工具箱菜单、原功能不变"
+
 RED="\033[31m"
 GREEN="\033[32m"
 YELLOW="\033[33m"
@@ -312,6 +315,9 @@ menu(){
     echo " -------------"
     echo -e " ${GREEN}9.${PLAIN} 更新脚本"
     echo -e " ${GREEN}0.${PLAIN} 退出脚本"
+    echo ""
+    echo -e "${GREEN}当前版本${PLAIN}：$version"
+    echo -e "${GREEN}更新日志${PLAIN}：$version_log"
     echo ""
     if [[ -n $v4 ]]; then
         echo -e "IPv4 地址：$v4  地区：$c4  WARP状态：$w4"
