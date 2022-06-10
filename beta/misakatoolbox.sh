@@ -103,6 +103,53 @@ EOF
     export LC_ALL="zh_CN.UTF-8"
 }
 
+aapanel(){
+    if [[ $SYSTEM = "CentOS" ]]; then
+        yum install -y wget && wget -O install.sh http://www.aapanel.com/script/install_6.0_en.sh && bash install.sh forum
+    elif [[ $SYSTEM = "Debian" ]]; then
+        wget -O install.sh http://www.aapanel.com/script/install-ubuntu_6.0_en.sh && bash install.sh forum
+    else
+        wget -O install.sh http://www.aapanel.com/script/install-ubuntu_6.0_en.sh && sudo bash install.sh forum
+    fi
+}
+
+xui() {
+    echo "                            "
+    green "请选择你接下来使用的X-ui面板版本"
+    echo "1. 使用X-ui官方原版"
+    echo "2. 使用Misaka魔改版"
+    echo "3. 使用FranzKafkaYu魔改版"
+    echo "0. 返回主菜单"
+    read -p "请输入选项:" xuiNumberInput
+    case "$xuiNumberInput" in
+        1) bash <(curl -Ls https://raw.githubusercontents.com/vaxilu/x-ui/master/install.sh) ;;
+        2) wget -N --no-check-certificate https://raw.githubusercontents.com/Misaka-blog/x-ui/master/install.sh && bash install.sh ;;
+        3) bash <(curl -Ls https://raw.githubusercontents.com/FranzKafkaYu/x-ui/master/install.sh) ;;
+        0) menu ;;
+    esac
+}
+
+qlpanel(){
+    [[ -z $(docker -v 2>/dev/null) ]] && curl -fsSL https://get.docker.com | bash -s docker --mirror Aliyun
+    read -p "请输入将要安装的青龙面板容器名称：" qlPanelName
+    read -p "请输入外网访问端口：" qlHTTPPort
+    docker run -dit --name $qlPanelName --hostname $qlPanelName --restart always -p $qlHTTPPort:5700 -v $PWD/QL/config:/ql/config -v $PWD/QL/log:/ql/log -v $PWD/QL/db:/ql/db -v $PWD/QL/scripts:/ql/scripts -v $PWD/QL/jbot:/ql/jbot whyour/qinglong:latest
+    wg-quick down wgcf 2>/dev/null
+    v66=`curl -s6m8 https://ip.gs -k`
+    v44=`curl -s4m8 https://ip.gs -k`
+    yellow "青龙面板安装成功！！！"
+    if [[ -n $v44 && -z $v66 ]]; then
+        green "IPv4访问地址为：http://$v44:$qlHTTPPort"
+    elif [[ -n $v66 && -z $v44 ]]; then
+        green "IPv6访问地址为：http://[$v66]:$qlHTTPPort"
+    elif [[ -n $v44 && -n $v66 ]]; then
+        green "IPv4访问地址为：http://$v44:$qlHTTPPort"
+        green "IPv6访问地址为：http://[$v66]:$qlHTTPPort"
+    fi
+    yellow "请稍等1-3分钟，等待青龙面板容器启动"
+    wg-quick up wgcf 2>/dev/null
+}
+
 menu(){
     clear
     echo "#############################################################"
@@ -208,6 +255,12 @@ menu2(){
     echo ""
     read -rp " 请输入选项 [0-6]:" menuInput
     case $menuInput in
+        1) aapanel ;;
+        2) xui ;;
+        3) ${PACKAGE_INSTALL[int]} ca-certificates && wget -N git.io/aria2.sh && chmod +x aria2.sh && bash aria2.sh ;;
+        4) sh <(curl https://cyberpanel.net/install.sh || wget -O - https://cyberpanel.net/install.sh) ;;
+        5) qlpanel ;;
+        6) source <(curl -sL https://git.io/trojan-install) ;;
         *) exit 1 ;;
     esac
 }
