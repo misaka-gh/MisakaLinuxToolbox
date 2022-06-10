@@ -316,8 +316,8 @@ menu(){
     echo -e " ${GREEN}9.${PLAIN} 更新脚本"
     echo -e " ${GREEN}0.${PLAIN} 退出脚本"
     echo ""
-    echo -e "${GREEN}当前版本${PLAIN}：$version"
-    echo -e "${GREEN}更新日志${PLAIN}：$version_log"
+    echo -e "${YELLOW}当前版本${PLAIN}：$version"
+    echo -e "${YELLOW}更新日志${PLAIN}：$version_log"
     echo ""
     if [[ -n $v4 ]]; then
         echo -e "IPv4 地址：$v4  地区：$c4  WARP状态：$w4"
