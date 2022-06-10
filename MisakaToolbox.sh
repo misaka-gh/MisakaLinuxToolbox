@@ -291,6 +291,7 @@ vpsBench() {
 	echo "2. 使用bench.sh"
 	echo "3. 使用superbench"
 	echo "4. 使用lemonbench"
+	echo "5. 使用融合怪全测"
 	echo "                            "
 	echo "0. 返回主菜单"
 	read -p "请输入选项:" page3NumberInput
@@ -299,6 +300,7 @@ vpsBench() {
 		2) wget -qO- bench.sh | bash ;;
 		3) wget -qO- --no-check-certificate https://raw.githubusercontents.com/oooldking/script/master/superbench.sh | bash ;;
 		4) curl -fsL https://ilemonra.in/LemonBenchIntl | bash -s fast ;;
+		5) bash <(wget -qO- --no-check-certificate https://gitlab.com/spiritysdx/za/-/raw/main/ecs.sh) ;;
 		0) menu ;;
 	esac
 }
