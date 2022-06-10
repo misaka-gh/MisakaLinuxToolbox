@@ -1,519 +1,529 @@
 #!/bin/bash
 
-# 全局变量
-ver="2.1.9"
-changeLog="新增Misaka魔改版X-ui脚本"
-arch=$(uname -m)
-virt=$(systemd-detect-virt)
-kernelVer=$(uname -r)
-TUN=$(cat /dev/net/tun 2>&1 | tr '[:upper:]' '[:lower:]')
-REGEX=("debian" "ubuntu" "centos|red hat|kernel|oracle linux|alma|rocky" "'amazon linux'" "alpine")
-RELEASE=("Debian" "Ubuntu" "CentOS" "CentOS" "Alpine")
-PACKAGE_UPDATE=("apt -y update" "apt -y update" "yum -y update" "yum -y update" "apk update -f")
-PACKAGE_INSTALL=("apt -y install" "apt -y install" "yum -y install" "yum -y install" "apk add -f")
-CMD=("$(grep -i pretty_name /etc/os-release 2>/dev/null | cut -d \" -f2)" "$(hostnamectl 2>/dev/null | grep -i system | cut -d : -f2)" "$(lsb_release -sd 2>/dev/null)" "$(grep -i description /etc/lsb-release 2>/dev/null | cut -d \" -f2)" "$(grep . /etc/redhat-release 2>/dev/null)" "$(grep . /etc/issue 2>/dev/null | cut -d \\ -f1 | sed '/^[ ]*$/d')")
+version="v3.0"
+version_log="重构工具箱菜单、原功能不变"
 
-# 控制台字体
-green() {
-	echo -e "\033[32m\033[01m$1\033[0m"
+RED="\033[31m"
+GREEN="\033[32m"
+YELLOW="\033[33m"
+PLAIN="\033[0m"
+
+red(){
+    echo -e "\033[31m\033[01m$1\033[0m"
 }
 
-red() {
-	echo -e "\033[31m\033[01m$1\033[0m"
+green(){
+    echo -e "\033[32m\033[01m$1\033[0m"
 }
 
-yellow() {
-	echo -e "\033[33m\033[01m$1\033[0m"
+yellow(){
+    echo -e "\033[33m\033[01m$1\033[0m"
 }
 
-# 必须以root运行脚本
-[[ $(id -u) != 0 ]] && red "请使用“sudo -i”登录root用户后执行工具箱脚本！！！" && exit 1
+REGEX=("debian" "ubuntu" "centos|red hat|kernel|oracle linux|alma|rocky" "'amazon linux'")
+RELEASE=("Debian" "Ubuntu" "CentOS" "CentOS")
+PACKAGE_UPDATE=("apt-get update" "apt-get update" "yum -y update" "yum -y update")
+PACKAGE_INSTALL=("apt -y install" "apt -y install" "yum -y install" "yum -y install")
+PACKAGE_REMOVE=("apt -y remove" "apt -y remove" "yum -y remove" "yum -y remove")
+PACKAGE_UNINSTALL=("apt -y autoremove" "apt -y autoremove" "yum -y autoremove" "yum -y autoremove")
 
-# 判断系统，此部分代码感谢fscarmen的技术指导
+CMD=("$(grep -i pretty_name /etc/os-release 2>/dev/null | cut -d \" -f2)" "$(hostnamectl 2>/dev/null | grep -i system | cut -d : -f2)" "$(lsb_release -sd 2>/dev/null)" "$(grep -i description /etc/lsb-release 2>/dev/null | cut -d \" -f2)" "$(grep . /etc/redhat-release 2>/dev/null)" "$(grep . /etc/issue 2>/dev/null | cut -d \\ -f1 | sed '/^[ ]*$/d')") 
+
 for i in "${CMD[@]}"; do
-	SYS="$i" && [[ -n $SYS ]] && break
+    SYS="$i" 
+    if [[ -n $SYS ]]; then
+        break
+    fi
 done
 
 for ((int = 0; int < ${#REGEX[@]}; int++)); do
-	[[ $(echo "$SYS" | tr '[:upper:]' '[:lower:]') =~ ${REGEX[int]} ]] && SYSTEM="${RELEASE[int]}" && [[ -n $SYSTEM ]] && break
+    if [[ $(echo "$SYS" | tr '[:upper:]' '[:lower:]') =~ ${REGEX[int]} ]]; then
+        SYSTEM="${RELEASE[int]}"
+        if [[ -n $SYSTEM ]]; then
+            break
+        fi
+    fi
 done
 
+[[ $EUID -ne 0 ]] && red "注意：请在root用户下运行脚本" && exit 1
 [[ -z $SYSTEM ]] && red "不支持VPS的当前系统，请使用主流操作系统" && exit 1
 
-# 更新系统及安装依赖，此部分代码感谢fscarmen的技术指导
-${PACKAGE_UPDATE[int]}
-${PACKAGE_INSTALL[int]} curl wget sudo
+check_status(){
+    yellow "正在检查VPS系统状态..."
+    if [[ -z $(type -P curl) ]]; then
+        yellow "检测curl未安装，正在安装中..."
+        if [[ ! $SYSTEM == "CentOS" ]]; then
+            ${PACKAGE_UPDATE[int]}
+        fi
+        ${PACKAGE_INSTALL[int]} curl
+    fi
+    if [[ -z $(type -P sudo) ]]; then
+        yellow "检测sudo未安装，正在安装中..."
+        if [[ ! $SYSTEM == "CentOS" ]]; then
+            ${PACKAGE_UPDATE[int]}
+        fi
+        ${PACKAGE_INSTALL[int]} sudo
+    fi
 
-# 获取IP地址及其信息
-IP4=$(curl -s4m8 https://ip.gs/json)
-IP6=$(curl -s6m8 https://ip.gs/json)
-WAN4=$(expr "$IP4" : '.*ip\":\"\([^"]*\).*')
-WAN6=$(expr "$IP6" : '.*ip\":\"\([^"]*\).*')
-COUNTRY4=$(expr "$IP4" : '.*country\":\"\([^"]*\).*')
-COUNTRY6=$(expr "$IP6" : '.*country\":\"\([^"]*\).*')
-ASNORG4=$(expr "$IP4" : '.*asn_org\":\"\([^"]*\).*')
-ASNORG6=$(expr "$IP6" : '.*asn_org\":\"\([^"]*\).*')
+    IPv4Status=$(curl -s4m8 https://www.cloudflare.com/cdn-cgi/trace -k | grep warp | cut -d= -f2)
+    IPv6Status=$(curl -s6m8 https://www.cloudflare.com/cdn-cgi/trace -k | grep warp | cut -d= -f2)
 
-# 判断IP地址状态
-IP4="$WAN4 （$COUNTRY4 $ASNORG4）"
-IP6="$WAN6 （$COUNTRY6 $ASNORG6）"
-if [ -z $WAN4 ]; then
-	IP4="当前VPS未检测到IPv4地址"
-fi
-if [ -z $WAN6 ]; then
-	IP6="当前VPS未检测到IPv6地址"
-fi
+    if [[ $IPv4Status =~ "on"|"plus" ]] || [[ $IPv6Status =~ "on"|"plus" ]]; then
+        # 关闭Wgcf-WARP，以防识别有误
+        wg-quick down wgcf >/dev/null 2>&1
+        v66=`curl -s6m8 https://ip.gs -k`
+        v44=`curl -s4m8 https://ip.gs -k`
+        wg-quick up wgcf >/dev/null 2>&1
+    else
+        v66=`curl -s6m8 https://ip.gs -k`
+        v44=`curl -s4m8 https://ip.gs -k`
+    fi
 
-# 获取脚本运行次数
-COUNT=$(curl -sm8 "https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fcdn.jsdelivr.net%2Fgh%2FMisaka-blog%2FMisakaLinuxToolbox%40master%2FMisakaToolbox.sh&count_bg=%2379C83D&title_bg=%23555555&icon=&icon_color=%23E7E7E7&title=hits&edge_flat=false" 2>&1) &&
-TODAY=$(expr "$COUNT" : '.*\s\([0-9]\{1,\}\)\s/.*')
-TOTAL=$(expr "$COUNT" : '.*/\s\([0-9]\{1,\}\)\s.*')
+    if [[ $IPv4Status == "off" ]]; then
+        w4="${RED}未启用WARP${PLAIN}"
+    fi
+    if [[ $IPv6Status == "off" ]]; then
+        w6="${RED}未启用WARP${PLAIN}"
+    fi
+    if [[ $IPv4Status == "on" ]]; then
+        w4="${YELLOW}WARP 免费账户${PLAIN}"
+    fi
+    if [[ $IPv6Status == "on" ]]; then
+        w6="${YELLOW}WARP 免费账户${PLAIN}"
+    fi
+    if [[ $IPv4Status == "plus" ]]; then
+        w4="${GREEN}WARP+ / Teams${PLAIN}"
+    fi
+    if [[ $IPv6Status == "plus" ]]; then
+        w6="${GREEN}WARP+ / Teams${PLAIN}"
+    fi
 
-#第一页
-oraclefirewall() {
-	if [ $SYSTEM = "CentOS" ]; then
-		systemctl stop oracle-cloud-agent
-		systemctl disable oracle-cloud-agent
-		systemctl stop oracle-cloud-agent-updater
-		systemctl disable oracle-cloud-agent-updater
-		systemctl stop firewalld.service
-		systemctl disable firewalld.service
-		yellow "Oracle Cloud原生系统防火墙禁用成功"
-	else
-		iptables -P INPUT ACCEPT
-		iptables -P FORWARD ACCEPT
-		iptables -P OUTPUT ACCEPT
-		iptables -F
-		apt-get purge netfilter-persistent -y
-		yellow "Oracle Cloud原生系统防火墙禁用成功"
-	fi
+    # VPSIP变量说明：0为纯IPv6 VPS、1为纯IPv4 VPS、2为原生双栈VPS
+    if [[ -n $v66 ]] && [[ -z $v44 ]]; then
+        VPSIP=0
+    elif [[ -z $v66 ]] && [[ -n $v44 ]]; then
+        VPSIP=1
+    elif [[ -n $v66 ]] && [[ -n $v44 ]]; then
+        VPSIP=2
+    fi
+
+    v4=$(curl -s4m8 https://ip.gs -k)
+    v6=$(curl -s6m8 https://ip.gs -k)
+    c4=$(curl -s4m8 https://ip.gs/country -k)
+    c6=$(curl -s6m8 https://ip.gs/country -k)
+    s5p=$(warp-cli --accept-tos settings 2>/dev/null | grep 'WarpProxy on port' | awk -F "port " '{print $2}')
+    w5p=$(grep BindAddress /etc/wireguard/proxy.conf 2>/dev/null | sed "s/BindAddress = 127.0.0.1://g")
+    if [[ -n $s5p ]]; then
+        s5s=$(curl -sx socks5h://localhost:$s5p https://www.cloudflare.com/cdn-cgi/trace -k --connect-timeout 8 | grep warp | cut -d= -f2)
+        s5i=$(curl -sx socks5h://localhost:$s5p https://ip.gs -k --connect-timeout 8)
+        s5c=$(curl -sx socks5h://localhost:$s5p https://ip.gs/country -k --connect-timeout 8)
+    fi
+    if [[ -n $w5p ]]; then
+        w5s=$(curl -sx socks5h://localhost:$w5p https://www.cloudflare.com/cdn-cgi/trace -k --connect-timeout 8 | grep warp | cut -d= -f2)
+        w5i=$(curl -sx socks5h://localhost:$w5p https://ip.gs -k --connect-timeout 8)
+        w5c=$(curl -sx socks5h://localhost:$w5p https://ip.gs/country -k --connect-timeout 8)
+    fi
+
+    if [[ -z $s5s ]] || [[ $s5s == "off" ]]; then
+        s5="${RED}未启动${PLAIN}"
+    fi
+    if [[ -z $w5s ]] || [[ $w5s == "off" ]]; then
+        w5="${RED}未启动${PLAIN}"
+    fi
+    if [[ $s5s == "on" ]]; then
+        s5="${YELLOW}WARP 免费账户${PLAIN}"
+    fi
+    if [[ $w5s == "on" ]]; then
+        w5="${YELLOW}WARP 免费账户${PLAIN}"
+    fi
+    if [[ $s5s == "plus" ]]; then
+        s5="${GREEN}WARP+ / Teams${PLAIN}"
+    fi
+    if [[ $w5s == "plus" ]]; then
+        w5="${GREEN}WARP+ / Teams${PLAIN}"
+    fi
 }
 
-open_ports() {
-	systemctl stop firewalld.service
-	systemctl disable firewalld.service
-	setenforce 0
-	ufw disable
-	iptables -P INPUT ACCEPT
-	iptables -P FORWARD ACCEPT
-	iptables -P OUTPUT ACCEPT
-	iptables -t nat -F
-	iptables -t mangle -F
-	iptables -F
-	iptables -X
-	netfilter-persistent save
-	yellow "VPS中的所有网络端口已开启"
+open_ports(){
+    systemctl stop firewalld.service 2>/dev/null
+    systemctl disable firewalld.service 2>/dev/null
+    setenforce 0 2>/dev/null
+    ufw disable 2>/dev/null
+    iptables -P INPUT ACCEPT 2>/dev/null
+    iptables -P FORWARD ACCEPT 2>/dev/null
+    iptables -P OUTPUT ACCEPT 2>/dev/null
+    iptables -t nat -F 2>/dev/null
+    iptables -t mangle -F 2>/dev/null
+    iptables -F 2>/dev/null
+    iptables -X 2>/dev/null
+    netfilter-persistent save 2>/dev/null
+    green "VPS的防火墙端口已放行！"
 }
 
-euservDig9() {
-	echo -e "search blue.kundencontroller.de\noptions rotate\nnameserver 2a02:180:6:5::1c\nnameserver 2a02:180:6:5::4\nnameserver 2a02:180:6:5::1e\nnameserver 2a02:180:6:5::1d" >/etc/resolv.conf
+bbr_script(){
+    virt=$(systemd-detect-virt)
+    TUN=$(cat /dev/net/tun 2>&1 | tr '[:upper:]' '[:lower:]')
+    if [ ${virt} =~ "kvm"|"zvm"|"microsoft"|"xen"|"vmware" ]; then
+        wget -N --no-check-certificate "https://raw.githubusercontents.com/chiakge/Linux-NetSpeed/master/tcp.sh" && chmod +x tcp.sh && ./tcp.sh
+    elif [ ${virt} == "openvz" ]; then
+        if [[ ! $TUN =~ 'in bad state' ]] && [[ ! $TUN =~ '处于错误状态' ]] && [[ ! $TUN =~ 'Die Dateizugriffsnummer ist in schlechter Verfassung' ]]; then
+            wget -N --no-check-certificate https://raw.githubusercontents.com/Misaka-blog/tun-script/master/tun.sh && bash tun.sh
+        else
+            wget -N --no-check-certificate https://raw.githubusercontents.com/mzz2017/lkl-haproxy/master/lkl-haproxy.sh && bash lkl-haproxy.sh
+        fi
+    else
+        red "抱歉，你的VPS虚拟化架构暂时不支持bbr加速脚本"
+    fi
 }
 
-rootLogin() {
-	wget -N https://raw.githubusercontents.com/Misaka-blog/rootLogin/master/root.sh && bash root.sh
+v6_dns64(){
+    wg-quick down wgcf 2>/dev/null
+    v66=`curl -s6m8 https://ip.gs -k`
+    v44=`curl -s4m8 https://ip.gs -k`
+    if [[ -z $v44 && -n $v66 ]]; then
+        echo -e "nameserver 2a01:4f8:c2c:123f::1" > /etc/resolv.conf
+        green "设置DNS64服务器成功！"
+    else
+        red "非纯IPv6 VPS，设置DNS64服务器失败！"
+    fi
+    wg-quick up wgcf 2>/dev/null
 }
 
-screenManager() {
-	wget -N https://cdn.jsdelivr.net/gh/Misaka-blog/screenManager@master/screen.sh && chmod -R 777 screen.sh && bash screen.sh
+warp_script(){
+    green "请选择你接下来使用的脚本"
+    echo "1. Misaka-WARP"
+    echo "2. fscarmen"
+    echo "3. fscarmen-docker"
+    echo "4. fscarmen warp解锁奈飞流媒体脚本"
+    echo "5. P3TERX"
+    echo "0. 返回主菜单"
+    echo ""
+    read -rp "请输入选项:" warpNumberInput
+	case $warpNumberInput in
+        1) wget -N https://raw.githubusercontents.com/Misaka-blog/Misaka-WARP-Script/master/misakawarp.sh && bash misakawarp.sh ;;
+        2) wget -N https://raw.githubusercontents.com/fscarmen/warp/main/menu.sh && bash menu.sh ;;
+        3) wget -N https://raw.githubusercontents.com/fscarmen/warp/main/docker.sh && bash docker.sh ;;
+        4) bash <(curl -sSL https://raw.githubusercontents.com/fscarmen/warp_unlock/main/unlock.sh) ;;
+        5) bash <(curl -fsSL https://raw.githubusercontents.com/P3TERX/warp.sh/main/warp.sh) menu ;;
+        0) menu ;;
+    esac
 }
 
-bbr() {
-	if [ ${virt} == "kvm" ]; then
-		wget -N --no-check-certificate "https://raw.githubusercontents.com/chiakge/Linux-NetSpeed/master/tcp.sh" && chmod +x tcp.sh && ./tcp.sh
-	fi
-	if [ ${virt} == "zvm" ]; then
-		wget -N --no-check-certificate "https://raw.githubusercontents.com/chiakge/Linux-NetSpeed/master/tcp.sh" && chmod +x tcp.sh && ./tcp.sh
-	fi
-	if [ ${virt} == "microsoft" ]; then
-		wget -N --no-check-certificate "https://raw.githubusercontents.com/chiakge/Linux-NetSpeed/master/tcp.sh" && chmod +x tcp.sh && ./tcp.sh
-	fi
-	if [ ${virt} == "xen" ]; then
-		wget -N --no-check-certificate "https://raw.githubusercontents.com/chiakge/Linux-NetSpeed/master/tcp.sh" && chmod +x tcp.sh && ./tcp.sh
-	fi
-	if [ ${virt} == "openvz" ]; then
-		[[ ! $TUN =~ 'in bad state' ]] && [[ ! $TUN =~ '处于错误状态' ]] && [[ ! $TUN =~ 'Die Dateizugriffsnummer ist in schlechter Verfassung' ]] && red "未开启TUN，请去VPS后台开启" && exit 1
-		wget --no-cache -O lkl-haproxy.sh https://raw.githubusercontents.com/mzz2017/lkl-haproxy/master/lkl-haproxy.sh && bash lkl-haproxy.sh
-	fi
-	if [ ${virt} == "lxc" ]; then
-		red "抱歉，你的VPS暂时不支持bbr加速脚本"
-	fi
-}
-
-warp() {
-	echo "                            "
-	green "请选择你接下来使用的脚本"
-	echo "                            "
-	echo "1. Misaka-WARP"
-	echo "2. fscarmen"
-	echo "3. fscarmen-docker"
-	echo "4. fscarmen warp解锁奈飞流媒体脚本"
-	echo "5. P3TERX"
-	echo "                            "
-	echo "0. 返回主菜单"
-	read -p "请输入选项:" warpNumberInput
-	case "$warpNumberInput" in
-		1) wget -N https://raw.githubusercontents.com/Misaka-blog/Misaka-WARP-Script/master/misakawarp.sh && bash misakawarp.sh ;;
-		2) wget -N https://cdn.jsdelivr.net/gh/fscarmen/warp/menu.sh && bash menu.sh ;;
-		3) wget -N https://cdn.jsdelivr.net/gh/fscarmen/warp/docker.sh && bash docker.sh ;;
-		4) bash <(curl -sSL https://raw.githubusercontent.com/fscarmen/warp_unlock/main/unlock.sh) ;;
-		5) bash <(curl -fsSL git.io/warp.sh) ;;
-		0) menu ;;
-	esac
-}
-
-dockerInstall() {
-	curl -fsSL https://get.docker.com | bash -s docker --mirror Aliyun
-}
-
-acmesh() {
-	wget -N https://cdn.jsdelivr.net/gh/Misaka-blog/acme-1key@master/acme1key.sh && chmod -R 777 acme1key.sh && bash acme1key.sh
-}
-
-dns64server() {
-	echo -e nameserver 2a01:4f8:c2c:123f::1 > /etc/resolv.conf
-	yellow "设置DNS64服务器完成"
-}
-
-cfArgoTunnel() {
-	wget -N https://cdn.jsdelivr.net/gh/Misaka-blog/argo-tunnel-script@master/argo.sh && bash argo.sh
-}
-
-ngrokScript() {
-	wget -N https://raw.githubusercontents.com/Misaka-blog/Ngrok-1key/master/ngrok.sh && bash ngrok.sh
-}
-
-setlanguage(){
-	chattr -i /etc/locale.gen
-	cat > '/etc/locale.gen' << EOF
+setChinese(){
+    chattr -i /etc/locale.gen
+    cat > '/etc/locale.gen' << EOF
 zh_CN.UTF-8 UTF-8
 zh_TW.UTF-8 UTF-8
 en_US.UTF-8 UTF-8
 ja_JP.UTF-8 UTF-8
 EOF
-	locale-gen
-	update-locale
-	chattr -i /etc/default/locale
-	cat > '/etc/default/locale' << EOF
+    locale-gen
+    update-locale
+    chattr -i /etc/default/locale
+    cat > '/etc/default/locale' << EOF
 LANGUAGE="zh_CN.UTF-8"
 LANG="zh_CN.UTF-8"
 LC_ALL="zh_CN.UTF-8"
 EOF
-	export LANGUAGE="zh_CN.UTF-8"
-	export LANG="zh_CN.UTF-8"
-	export LC_ALL="zh_CN.UTF-8"
+    export LANGUAGE="zh_CN.UTF-8"
+    export LANG="zh_CN.UTF-8"
+    export LC_ALL="zh_CN.UTF-8"
 }
-# 第二页
-bt() {
-	if [ $SYSTEM = "CentOS" ]; then
-		yum install -y wget && wget -O install.sh http://www.aapanel.com/script/install_6.0_en.sh && bash install.sh forum
-	elif [ $SYSTEM = "Debian" ]; then
-		wget -O install.sh http://www.aapanel.com/script/install-ubuntu_6.0_en.sh && bash install.sh forum
-	else
-		wget -O install.sh http://www.aapanel.com/script/install-ubuntu_6.0_en.sh && sudo bash install.sh forum
-	fi
+
+aapanel(){
+    if [[ $SYSTEM = "CentOS" ]]; then
+        yum install -y wget && wget -O install.sh http://www.aapanel.com/script/install_6.0_en.sh && bash install.sh forum
+    elif [[ $SYSTEM = "Debian" ]]; then
+        wget -O install.sh http://www.aapanel.com/script/install-ubuntu_6.0_en.sh && bash install.sh forum
+    else
+        wget -O install.sh http://www.aapanel.com/script/install-ubuntu_6.0_en.sh && sudo bash install.sh forum
+    fi
 }
 
 xui() {
-	echo "                            "
-	green "请选择你接下来使用的X-ui面板版本"
-	echo "                            "
-	echo "1. 使用X-ui官方原版"
-	echo "2. 使用Misaka魔改版"
-	echo "                            "
-	echo "0. 返回主菜单"
-	read -p "请输入选项:" xuiNumberInput
-	case "$xuiNumberInput" in
-		1) bash <(curl -Ls https://raw.githubusercontents.com/vaxilu/x-ui/master/install.sh) ;;
-		2) wget -N --no-check-certificate https://raw.githubusercontents.com/Misaka-blog/x-ui/master/install.sh && bash install.sh ;;
-		0) menu ;;
-	esac
+    echo "                            "
+    green "请选择你接下来使用的X-ui面板版本"
+    echo "1. 使用X-ui官方原版"
+    echo "2. 使用Misaka魔改版"
+    echo "3. 使用FranzKafkaYu魔改版"
+    echo "0. 返回主菜单"
+    read -rp "请输入选项:" xuiNumberInput
+    case "$xuiNumberInput" in
+        1) bash <(curl -Ls https://raw.githubusercontents.com/vaxilu/x-ui/master/install.sh) ;;
+        2) wget -N --no-check-certificate https://raw.githubusercontents.com/Misaka-blog/x-ui/master/install.sh && bash install.sh ;;
+        3) bash <(curl -Ls https://raw.githubusercontents.com/FranzKafkaYu/x-ui/master/install.sh) ;;
+        0) menu ;;
+    esac
 }
 
-aria2() {
-	${PACKAGE_INSTALL[int]} ca-certificates
-	wget -N git.io/aria2.sh && chmod +x aria2.sh && bash aria2.sh
-}
-
-cyberpanel() {
-	sh <(curl https://cyberpanel.net/install.sh || wget -O - https://cyberpanel.net/install.sh)
-}
-
-qlPanel() {
-	[[ -z $(docker -v 2>/dev/null) ]] && curl -fsSL https://get.docker.com | bash -s docker --mirror Aliyun
-	read -p "请输入将要安装的青龙面板容器名称：" qlPanelName
-	read -p "请输入外网访问端口：" qlHTTPPort
-	docker run -dit --name $qlPanelName --hostname $qlPanelName --restart always -p $qlHTTPPort:5700 -v $PWD/QL/config:/ql/config -v $PWD/QL/log:/ql/log -v $PWD/QL/db:/ql/db -v $PWD/QL/scripts:/ql/scripts -v $PWD/QL/jbot:/ql/jbot whyour/qinglong:latest
-	yellow "青龙面板安装成功！！！"
-	green "IPv4访问地址为：http://$WAN4:$qlHTTPPort"
-	green "IPv6访问地址为：http://[$WAN6]:$qlHTTPPort"
-	yellow "请稍等1-3分钟，等待青龙面板容器启动"
-}
-
-trojanpanel() {
-	source <(curl -sL https://git.io/trojan-install)
-}
-
-lxcovztun() {
-	wget -N https://raw.githubusercontents.com/Misaka-blog/tun-script/master/tun.sh && bash tun.sh
-}
-
-# 第三页
-macka() {
-	wget -P /root -N --no-check-certificate "https://raw.githubusercontents.com/mack-a/v2ray-agent/master/install.sh" && chmod 700 /root/install.sh && /root/install.sh
-}
-
-boy233() {
-	bash <(curl -s -L https://git.io/v2ray.sh)
-}
-
-misakaXray() {
-	bash <(curl -sL https://cdn.jsdelivr.net/gh/Misaka-blog/Xray-script@master/xray.sh)
-}
-
-tgMTProxy() {
-	mkdir /home/mtproxy && cd /home/mtproxy
-	curl -s -o mtproxy.sh https://raw.githubusercontents.com/sunpma/mtp/master/mtproxy.sh && chmod +x mtproxy.sh && bash mtproxy.sh
-	bash mtproxy.sh start
-}
-
-shadowsocks() {
-	wget --no-check-certificate -O shadowsocks-all.sh https://raw.githubusercontents.com/teddysun/shadowsocks_install/master/shadowsocks-all.sh
-	chmod +x shadowsocks-all.sh
-	./shadowsocks-all.sh 2>&1 | tee shadowsocks-all.log
-}
-
-# 第四页
-vpsBench() {
-	echo "                            "
-	green "请选择你接下来使用的脚本"
-	echo "                            "
-	echo "1. 使用misakabench"
-	echo "2. 使用bench.sh"
-	echo "3. 使用superbench"
-	echo "4. 使用lemonbench"
-	echo "5. 使用融合怪全测"
-	echo "                            "
-	echo "0. 返回主菜单"
-	read -p "请输入选项:" page3NumberInput
-	case "$page3NumberInput" in
-		1) bash <(curl -Lso- https://cdn.jsdelivr.net/gh/Misaka-blog/misakabench@master/misakabench.sh) ;;
-		2) wget -qO- bench.sh | bash ;;
-		3) wget -qO- --no-check-certificate https://raw.githubusercontents.com/oooldking/script/master/superbench.sh | bash ;;
-		4) curl -fsL https://ilemonra.in/LemonBenchIntl | bash -s fast ;;
-		5) bash <(wget -qO- --no-check-certificate https://gitlab.com/spiritysdx/za/-/raw/main/ecs.sh) ;;
-		0) menu ;;
-	esac
-}
-
-mediaUnblockTest() {
-	bash <(curl -L -s https://raw.githubusercontents.com/lmc999/RegionRestrictionCheck/main/check.sh)
-}
-
-speedTest() {
-	bash <(curl -Lso- https://git.io/superspeed.sh)
-}
-
-# 第五页
-nezha() {
-	curl -L https://raw.githubusercontents.com/naiba/nezha/master/script/install.sh -o nezha.sh
-	chmod +x nezha.sh
-	sudo ./nezha.sh
+qlpanel(){
+    [[ -z $(docker -v 2>/dev/null) ]] && curl -fsSL https://get.docker.com | bash -s docker --mirror Aliyun
+    read -rp "请输入将要安装的青龙面板容器名称：" qlPanelName
+    read -rp "请输入外网访问端口：" qlHTTPPort
+    docker run -dit --name $qlPanelName --hostname $qlPanelName --restart always -p $qlHTTPPort:5700 -v $PWD/QL/config:/ql/config -v $PWD/QL/log:/ql/log -v $PWD/QL/db:/ql/db -v $PWD/QL/scripts:/ql/scripts -v $PWD/QL/jbot:/ql/jbot whyour/qinglong:latest
+    wg-quick down wgcf 2>/dev/null
+    v66=`curl -s6m8 https://ip.gs -k`
+    v44=`curl -s4m8 https://ip.gs -k`
+    yellow "青龙面板安装成功！！！"
+    if [[ -n $v44 && -z $v66 ]]; then
+        green "IPv4访问地址为：http://$v44:$qlHTTPPort"
+    elif [[ -n $v66 && -z $v44 ]]; then
+        green "IPv6访问地址为：http://[$v66]:$qlHTTPPort"
+    elif [[ -n $v44 && -n $v66 ]]; then
+        green "IPv4访问地址为：http://$v44:$qlHTTPPort"
+        green "IPv6访问地址为：http://[$v66]:$qlHTTPPort"
+    fi
+    yellow "请稍等1-3分钟，等待青龙面板容器启动"
+    wg-quick up wgcf 2>/dev/null
 }
 
 serverstatus() {
-	wget -N https://raw.githubusercontents.com/cokemine/ServerStatus-Hotaru/master/status.sh
-	echo "                            "
-	green "请选择你需要安装探针的客户端类型"
-	echo "                            "
-	echo "1. 服务端"
-	echo "2. 监控端"
-	echo "0. 返回主页"
-	echo "                            "
-	read -p "请输入选项:" menuNumberInput1
-	case "$menuNumberInput1" in
-		1) bash status.sh s ;;
-		2) bash status.sh c ;;
-		0) menu ;;
-	esac
+    wget -N https://raw.githubusercontents.com/cokemine/ServerStatus-Hotaru/master/status.sh
+    echo "                            "
+    green "请选择你需要安装探针的客户端类型"
+    echo "1. 服务端"
+    echo "2. 监控端"
+    echo "0. 返回主页"
+    echo "                            "
+	read -rp "请输入选项:" menuNumberInput1
+    case "$menuNumberInput1" in
+        1) bash status.sh s ;;
+        2) bash status.sh c ;;
+        0) menu ;;
+    esac
 }
 
-ddsystem() {
-	wget --no-check-certificate -O ~/Network-Reinstall-System-Modify.sh 'https://www.cxthhhhh.com/CXT-Library/Network-Reinstall-System-Modify/Network-Reinstall-System-Modify.sh' && chmod +x ~/Network-Reinstall-System-Modify.sh && bash ~/Network-Reinstall-System-Modify.sh -UI_Options
+menu(){
+    check_status
+    clear
+    echo "#############################################################"
+    echo -e "#                   ${RED}Misaka Linux Toolbox${PLAIN}                    #"
+    echo -e "# ${GREEN}作者${PLAIN}: Misaka No                                           #"
+    echo -e "# ${GREEN}网址${PLAIN}: https://owo.misaka.rest                             #"
+    echo -e "# ${GREEN}论坛${PLAIN}: https://vpsgo.co                                    #"
+    echo -e "# ${GREEN}TG群${PLAIN}: https://t.me/misakanetcn                            #"
+    echo -e "# ${GREEN}GitHub${PLAIN}: https://github.com/Misaka-blog                    #"
+    echo -e "# ${GREEN}Bitbucket${PLAIN}: https://bitbucket.org/misakano7545             #"
+    echo -e "# ${GREEN}GitLab${PLAIN}: https://gitlab.com/misaka-blog                    #"
+    echo "#############################################################"
+    echo ""
+    echo -e " ${GREEN}1.${PLAIN} 系统相关"
+    echo -e " ${GREEN}2.${PLAIN} 面板相关"
+    echo -e " ${GREEN}3.${PLAIN} 节点相关"
+    echo -e " ${GREEN}4.${PLAIN} 性能测试"
+    echo -e " ${GREEN}5.${PLAIN} VPS探针"
+    echo " -------------"
+    echo -e " ${GREEN}9.${PLAIN} 更新脚本"
+    echo -e " ${GREEN}0.${PLAIN} 退出脚本"
+    echo ""
+    echo -e "${YELLOW}当前版本${PLAIN}：$version"
+    echo -e "${YELLOW}更新日志${PLAIN}：$version_log"
+    echo ""
+    if [[ -n $v4 ]]; then
+        echo -e "IPv4 地址：$v4  地区：$c4  WARP状态：$w4"
+    fi
+    if [[ -n $v6 ]]; then
+        echo -e "IPv6 地址：$v6  地区：$c6  WARP状态：$w6"
+    fi
+    if [[ -n $w5p ]]; then
+        echo -e "WireProxy代理端口: 127.0.0.1:$w5p  WireProxy状态: $w5"
+        if [[ -n $w5i ]]; then
+            echo -e "WireProxy IP: $w5i  地区: $w5c"
+        fi
+    fi
+    echo ""
+    read -rp " 请输入选项 [0-9]:" menuInput
+    case $menuInput in
+        1) menu1 ;;
+        2) menu2 ;;
+        3) menu3 ;;
+        4) menu4 ;;
+        5) menu5 ;;
+        *) exit 1 ;;
+    esac
 }
 
-# 菜单
-menu() {
-	clear
-	red "=================================="
-	echo "                           "
-	red "       Misaka Linux Toolbox        "
-	red "          by 小御坂的破站           "
-	echo "                           "
-	red "  Site: https://owo.misaka.rest  "
-	echo "                           "
-	red "=================================="
-	echo "                            "
-	green "当前工具箱版本：v$ver"
-	green "更新日志：$changeLog"
-	green "今日运行次数：$TODAY 总共运行次数：$TOTAL"
-	echo "                            "
-	red "检测到VPS信息如下："
-	yellow "处理器架构：$arch"
-	yellow "虚拟化架构：$virt"
-	yellow "操作系统：$CMD"
-	yellow "内核版本：$kernelVer"
-	yellow "公网IPv4地址：$IP4"
-	yellow "公网IPv6地址：$IP6"
-	echo "                            "
-	green "下面是脚本分类，请选择对应的分类后进入到相对应的菜单中"
-	echo "                            "
-	echo "1. 系统相关"
-	echo "2. 面板相关"
-	echo "3. 节点相关"
-	echo "4. VPS测试"
-	echo "5. VPS探针"
-	[ ${virt} == "kvm" ] && echo "6. 更换VPS系统(DD系统)"
-	echo "                            "
-	echo "9. 更新工具箱"
-	echo "0. 退出工具箱"
-	echo "                            "
-	read -p "请输入选项:" menuNumberInput
-	case "$menuNumberInput" in
-		1) page1 ;;
-		2) page2 ;;
-		3) page3 ;;
-		4) page4 ;;
-		5) page5 ;;
-		6) ddsystem ;;
-		9) wget -N --no-check-certificate https://raw.githubusercontents.com/Misaka-blog/MisakaLinuxToolbox/master/MisakaToolbox.sh && chmod -R 777 MisakaToolbox.sh && bash MisakaToolbox.sh ;;
-		0) exit 0 ;;
-	esac
+menu1(){
+    clear
+    echo "#############################################################"
+    echo -e "#                   ${RED}Misaka Linux Toolbox${PLAIN}                    #"
+    echo -e "# ${GREEN}作者${PLAIN}: Misaka No                                           #"
+    echo -e "# ${GREEN}网址${PLAIN}: https://owo.misaka.rest                             #"
+    echo -e "# ${GREEN}论坛${PLAIN}: https://vpsgo.co                                    #"
+    echo -e "# ${GREEN}TG群${PLAIN}: https://t.me/misakanetcn                            #"
+    echo -e "# ${GREEN}GitHub${PLAIN}: https://github.com/Misaka-blog                    #"
+    echo -e "# ${GREEN}Bitbucket${PLAIN}: https://bitbucket.org/misakano7545             #"
+    echo -e "# ${GREEN}GitLab${PLAIN}: https://gitlab.com/misaka-blog                    #"
+    echo "#############################################################"
+    echo ""
+    echo -e " ${GREEN}1.${PLAIN} 开放系统防火墙端口"
+    echo -e " ${GREEN}2.${PLAIN} 修改登录方式为 root + 密码"
+    echo -e " ${GREEN}3.${PLAIN} Screen 后台任务管理"
+    echo -e " ${GREEN}4.${PLAIN} BBR加速系列脚本"
+    echo -e " ${GREEN}5.${PLAIN} 纯IPv6 VPS设置DNS64服务器"
+    echo -e " ${GREEN}6.${PLAIN} 设置CloudFlare WARP"
+    echo -e " ${GREEN}7.${PLAIN} 下载并安装Docker"
+    echo -e " ${GREEN}8.${PLAIN} Acme.sh 证书申请"
+    echo -e " ${GREEN}9.${PLAIN} CF Argo Tunnel隧道穿透"
+    echo -e " ${GREEN}10.${PLAIN} Ngrok 内网穿透"
+    echo -e " ${GREEN}11.${PLAIN} 修改Linux系统软件源"
+    echo -e " ${GREEN}12.${PLAIN} 切换系统语言为中文"
+    echo -e " ${GREEN}13.${PLAIN} OpenVZ VPS启用TUN模块"
+    echo " -------------"
+    echo -e " ${GREEN}0.${PLAIN} 返回主菜单"
+    echo ""
+    read -rp " 请输入选项 [0-13]:" menuInput
+    case $menuInput in
+        1) open_ports ;;
+        2) wget -N --no-check-certificate https://raw.githubusercontents.com/Misaka-blog/rootLogin/master/root.sh && bash root.sh ;;
+        3) wget -N --no-check-certificate https://raw.githubusercontents.com/Misaka-blog/screenManager/master/screen.sh && bash screen.sh ;;
+        4) bbr_script ;;
+        5) v6_dns64 ;;
+        6) warp_script ;;
+        7) curl -fsSL https://get.docker.com | bash -s docker --mirror Aliyun ;;
+        8) wget -N --no-check-certificate https://raw.githubusercontents.com/Misaka-blog/acme-1key/master/acme1key.sh && bash acme1key.sh ;;
+        9) wget -N --no-check-certificate https://raw.githubusercontents.com/Misaka-blog/argo-tunnel-script/master/argo.sh && bash argo.sh ;;
+        10) wget -N --no-check-certificate https://raw.githubusercontents.com/Misaka-blog/Ngrok-1key/master/ngrok.sh && bash ngrok.sh ;;
+        11) bash <(curl -sSL https://cdn.jsdelivr.net/gh/SuperManito/LinuxMirrors@main/ChangeMirrors.sh) ;;
+        12) setChinese ;;
+        13) wget -N --no-check-certificate https://raw.githubusercontents.com/Misaka-blog/tun-script/master/tun.sh && bash tun.sh ;;
+        *) exit 1 ;;
+    esac
 }
 
-page1() {
-	echo "                            "
-	green "请选择你接下来的操作"
-	echo "                            "
-	echo "1. Oracle Cloud原生系统关闭防火墙"
-	echo "2. 开启VPS中所有的网络端口"
-	echo "3. 德鸡DiG9正常访问网络解决方案"
-	echo "4. 修改登录方式为 root + 密码 登录"
-	echo "5. Screen 后台任务管理"
-	echo "6. 开启BBR加速"
-	echo "7. 设置DNS64服务器"
-	echo "8. 安装WARP"
-	echo "9. 安装docker"
-	echo "10. Acme.sh 证书申请脚本"
-	echo "11. CloudFlare Argo Tunnel一键脚本"
-	echo "12. Ngrok 内网穿透一键脚本"
-	echo "13. LXC/OVZ VPS打开TUN模块"
-	echo "14. 更换Linux软件源"
-	echo "15. 更换系统语言为中文"
-	echo "                            "
-	echo "0. 返回主菜单"
-	read -p "请输入选项:" page1NumberInput
-	case "$page1NumberInput" in
-		1) oraclefirewall ;;
-		2) open_ports ;;
-		3) euservDig9 ;;
-		4) rootLogin ;;
-		5) screenManager ;;
-		6) bbr ;;
-		7) dns64server ;;
-		8) warp ;;
-		9) dockerInstall ;;
-		10) acmesh ;;
-		11) cfArgoTunnel ;;
-		12) ngrokScript ;;
-		13) lxcovztun ;;
-		14) bash <(curl -sSL https://cdn.jsdelivr.net/gh/SuperManito/LinuxMirrors@main/ChangeMirrors.sh) ;;
-		15) setlanguage ;;
-		0) menu ;;
-	esac
+menu2(){
+    clear
+    echo "#############################################################"
+    echo -e "#                   ${RED}Misaka Linux Toolbox${PLAIN}                    #"
+    echo -e "# ${GREEN}作者${PLAIN}: Misaka No                                           #"
+    echo -e "# ${GREEN}网址${PLAIN}: https://owo.misaka.rest                             #"
+    echo -e "# ${GREEN}论坛${PLAIN}: https://vpsgo.co                                    #"
+    echo -e "# ${GREEN}TG群${PLAIN}: https://t.me/misakanetcn                            #"
+    echo -e "# ${GREEN}GitHub${PLAIN}: https://github.com/Misaka-blog                    #"
+    echo -e "# ${GREEN}Bitbucket${PLAIN}: https://bitbucket.org/misakano7545             #"
+    echo -e "# ${GREEN}GitLab${PLAIN}: https://gitlab.com/misaka-blog                    #"
+    echo "#############################################################"
+    echo ""
+    echo -e " ${GREEN}1.${PLAIN} aapanel面板"
+    echo -e " ${GREEN}2.${PLAIN} x-ui面板"
+    echo -e " ${GREEN}3.${PLAIN} aria2(面板为远程链接)"
+    echo -e " ${GREEN}4.${PLAIN} CyberPanel面板"
+    echo -e " ${GREEN}5.${PLAIN} 青龙面板"
+    echo -e " ${GREEN}6.${PLAIN} Trojan面板"
+    echo " -------------"
+    echo -e " ${GREEN}0.${PLAIN} 返回主菜单"
+    echo ""
+    read -rp " 请输入选项 [0-6]:" menuInput
+    case $menuInput in
+        1) aapanel ;;
+        2) xui ;;
+        3) ${PACKAGE_INSTALL[int]} ca-certificates && wget -N git.io/aria2.sh && chmod +x aria2.sh && bash aria2.sh ;;
+        4) sh <(curl https://cyberpanel.net/install.sh || wget -O - https://cyberpanel.net/install.sh) ;;
+        5) qlpanel ;;
+        6) source <(curl -sL https://git.io/trojan-install) ;;
+        0) menu ;;
+        *) exit 1 ;;
+    esac
 }
 
-page2() {
-	echo "                            "
-	green "请选择你准备安装的面板"
-	echo "                            "
-	echo "1. 安装aapanel面板"
-	echo "2. 安装x-ui面板"
-	echo "3. 安装aria2(面板为远程链接)"
-	echo "4. 安装CyberPanel面板"
-	echo "5. 安装青龙面板"
-	echo "6. 安装Trojan面板"
-	echo "7. 安装V2ray.Fun面板"
-	echo "                            "
-	echo "0. 返回主菜单"
-	read -p "请输入选项:" page2NumberInput
-	case "$page2NumberInput" in
-		1) bt ;;
-		2) xui ;;
-		3) aria2 ;;
-		4) cyberpanel ;;
-		5) qlPanel ;;
-		6) trojanpanel ;;
-		7) wget -N --no-check-certificate https://raw.githubusercontents.com/FunctionClub/V2ray.Fun/master/install.sh && bash install.sh ;;
-		0) menu ;;
-	esac
+menu3(){
+    clear
+    echo "#############################################################"
+    echo -e "#                   ${RED}Misaka Linux Toolbox${PLAIN}                    #"
+    echo -e "# ${GREEN}作者${PLAIN}: Misaka No                                           #"
+    echo -e "# ${GREEN}网址${PLAIN}: https://owo.misaka.rest                             #"
+    echo -e "# ${GREEN}论坛${PLAIN}: https://vpsgo.co                                    #"
+    echo -e "# ${GREEN}TG群${PLAIN}: https://t.me/misakanetcn                            #"
+    echo -e "# ${GREEN}GitHub${PLAIN}: https://github.com/Misaka-blog                    #"
+    echo -e "# ${GREEN}Bitbucket${PLAIN}: https://bitbucket.org/misakano7545             #"
+    echo -e "# ${GREEN}GitLab${PLAIN}: https://gitlab.com/misaka-blog                    #"
+    echo "#############################################################"
+    echo ""
+    echo -e " ${GREEN}1.${PLAIN} mack-a"
+    echo -e " ${GREEN}2.${PLAIN} wulabing v2ray"
+    echo -e " ${GREEN}3.${PLAIN} wulabing xray (Nginx前置)"
+    echo -e " ${GREEN}4.${PLAIN} wulabing xray (Xray前置)"
+    echo -e " ${GREEN}5.${PLAIN} misaka xray"
+    echo -e " ${GREEN}6.${PLAIN} teddysun shadowsocks"
+    echo -e " ${GREEN}7.${PLAIN} telegram mtproxy"
+    echo " -------------"
+    echo -e " ${GREEN}0.${PLAIN} 返回主菜单"
+    echo ""
+    read -rp " 请输入选项 [0-6]:" menuInput
+    case $menuInput in
+        1) wget -P /root -N --no-check-certificate "https://raw.githubusercontents.com/mack-a/v2ray-agent/master/install.sh" && chmod 700 /root/install.sh && /root/install.sh ;;
+        2) wget -N --no-check-certificate -q -O install.sh "https://raw.githubusercontents.com/wulabing/V2Ray_ws-tls_bash_onekey/master/install.sh" && chmod +x install.sh && bash install.sh ;;
+        3) wget -N --no-check-certificate -q -O install.sh "https://raw.githubusercontents.com/wulabing/Xray_onekey/nginx_forward/install.sh" && chmod +x install.sh && bash install.sh ;;
+        4) wget -N --no-check-certificate -q -O install.sh "https://raw.githubusercontents.com/wulabing/Xray_onekey/main/install.sh" && chmod +x install.sh && bash install.sh ;;
+        5) wget -N --no-check-certificate https://raw.githubusercontents.com/Misaka-blog/Xray-script/master/xray.sh && bash xray.sh ;;
+        6) wget --no-check-certificate -O shadowsocks-all.sh https://raw.githubusercontents.com/teddysun/shadowsocks_install/master/shadowsocks-all.sh && chmod +x shadowsocks-all.sh && ./shadowsocks-all.sh 2>&1 | tee shadowsocks-all.log ;;
+        7) mkdir /home/mtproxy && cd /home/mtproxy && curl -s -o mtproxy.sh https://raw.githubusercontents.com/sunpma/mtp/master/mtproxy.sh && chmod +x mtproxy.sh && bash mtproxy.sh && bash mtproxy.sh start ;;
+        0) menu ;;
+        *) exit 1 ;;
+    esac
 }
 
-page3() {
-	echo "                            "
-	green "请选择你接下来使用的脚本"
-	echo "                            "
-	echo "1. 使用Mack-a的脚本"
-	echo "2. 使用233boy的脚本"
-	echo "3. 使用Misaka Xray的脚本"
-	echo "4. 搭建Telegram MTProxy代理"
-	echo "5. 使用Teddysun脚本搭建ShadowSocks"
-	echo "                            "
-	echo "0. 返回主菜单"
-	read -p "请输入选项:" page3NumberInput
-	case "$page3NumberInput" in
-		1) macka ;;
-		2) boy233 ;;
-		3) misakaXray ;;
-		4) tgMTProxy ;;
-		5) shadowsocks ;;
-		0) menu ;;
-	esac
+menu4(){
+    clear
+    echo "#############################################################"
+    echo -e "#                   ${RED}Misaka Linux Toolbox${PLAIN}                    #"
+    echo -e "# ${GREEN}作者${PLAIN}: Misaka No                                           #"
+    echo -e "# ${GREEN}网址${PLAIN}: https://owo.misaka.rest                             #"
+    echo -e "# ${GREEN}论坛${PLAIN}: https://vpsgo.co                                    #"
+    echo -e "# ${GREEN}TG群${PLAIN}: https://t.me/misakanetcn                            #"
+    echo -e "# ${GREEN}GitHub${PLAIN}: https://github.com/Misaka-blog                    #"
+    echo -e "# ${GREEN}Bitbucket${PLAIN}: https://bitbucket.org/misakano7545             #"
+    echo -e "# ${GREEN}GitLab${PLAIN}: https://gitlab.com/misaka-blog                    #"
+    echo "#############################################################"
+    echo ""
+    echo -e " ${GREEN}1.${PLAIN} VPS测试 (misakabench)"
+    echo -e " ${GREEN}2.${PLAIN} VPS测试 (bench.sh)"
+    echo -e " ${GREEN}3.${PLAIN} VPS测试 (superbench)"
+    echo -e " ${GREEN}4.${PLAIN} VPS测试 (lemonbench)"
+    echo -e " ${GREEN}5.${PLAIN} VPS测试 (融合怪全测)"
+    echo -e " ${GREEN}6.${PLAIN} 流媒体检测"
+    echo -e " ${GREEN}7.${PLAIN} 三网测速"
+    echo " -------------"
+    echo -e " ${GREEN}0.${PLAIN} 返回主菜单"
+    echo ""
+    read -rp " 请输入选项 [0-7]:" menuInput
+    case $menuInput in
+        1) bash <(curl -Lso- https://cdn.jsdelivr.net/gh/Misaka-blog/misakabench@master/misakabench.sh) ;;
+        2) wget -qO- bench.sh | bash ;;
+        3) wget -qO- --no-check-certificate https://raw.githubusercontents.com/oooldking/script/master/superbench.sh | bash ;;
+        4) curl -fsL https://ilemonra.in/LemonBenchIntl | bash -s fast ;;
+        5) bash <(wget -qO- --no-check-certificate https://gitlab.com/spiritysdx/za/-/raw/main/ecs.sh) ;;
+        6) bash <(curl -L -s https://raw.githubusercontents.com/lmc999/RegionRestrictionCheck/main/check.sh) ;;
+        7) bash <(curl -Lso- https://git.io/superspeed.sh) ;;
+        0) menu ;;
+        *) exit 1 ;;
+    esac
 }
 
-page4() {
-	echo "                            "
-	green "请选择你接下来的操作"
-	echo "                            "
-	echo "1. VPS测试"
-	echo "2. 流媒体检测"
-	echo "3. VPS三网测速"
-	echo "4. 路由测试"
-	echo "                            "
-	echo "0. 返回主菜单"
-	read -p "请输入选项:" page4NumberInput
-	case "$page4NumberInput" in
-		1) vpsBench ;;
-		2) mediaUnblockTest ;;
-		3) speedTest ;;
-		4) curl https://raw.githubusercontent.com/zhucaidan/mtr_trace/main/mtr_trace.sh|bash ;;
-		0) menu ;;
-	esac
-}
-
-page5() {
-	echo "                            "
-	green "请选择你需要的探针"
-	echo "                            "
-	echo "1. 哪吒面板"
-	echo "2. 可乐ServerStatus-Horatu"
-	echo "                            "
-	echo "0. 返回主菜单"
-	read -p "请输入选项:" page5NumberInput
-	case "$page5NumberInput" in
-		1) nezha ;;
-		2) serverstatus ;;
-		0) menu ;;
-	esac
+menu5(){
+    clear
+    echo "#############################################################"
+    echo -e "#                   ${RED}Misaka Linux Toolbox${PLAIN}                    #"
+    echo -e "# ${GREEN}作者${PLAIN}: Misaka No                                           #"
+    echo -e "# ${GREEN}网址${PLAIN}: https://owo.misaka.rest                             #"
+    echo -e "# ${GREEN}论坛${PLAIN}: https://vpsgo.co                                    #"
+    echo -e "# ${GREEN}TG群${PLAIN}: https://t.me/misakanetcn                            #"
+    echo -e "# ${GREEN}GitHub${PLAIN}: https://github.com/Misaka-blog                    #"
+    echo -e "# ${GREEN}Bitbucket${PLAIN}: https://bitbucket.org/misakano7545             #"
+    echo -e "# ${GREEN}GitLab${PLAIN}: https://gitlab.com/misaka-blog                    #"
+    echo "#############################################################"
+    echo ""
+    echo -e " ${GREEN}1.${PLAIN} 哪吒面板"
+    echo -e " ${GREEN}2.${PLAIN} 可乐ServerStatus-Horatu"
+    echo " -------------"
+    echo -e " ${GREEN}0.${PLAIN} 返回主菜单"
+    echo ""
+    read -rp " 请输入选项 [0-2]:" menuInput
+    case $menuInput in
+        1) curl -L https://raw.githubusercontents.com/naiba/nezha/master/script/install.sh -o nezha.sh && chmod +x nezha.sh && bash nezha.sh ;;
+        0) menu ;;
+        *) exit 1 ;;
+    esac
 }
 
 menu

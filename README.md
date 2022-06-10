@@ -7,20 +7,18 @@
 ![image.png](https://s2.loli.net/2021/12/26/WkiwbdExvnGAXCh.png)
 
 ## 使用方法
-0. 给这个项目一个Star
-1. 用SSH客户端连接上VPS，输入以下命令（若不是root用户请先`sudo -i`提权）
+
+1. 给这个项目一个Star 
+2. 用SSH客户端连接上VPS，输入以下命令（若不是root用户请先`sudo -i`提权）
+
 ```shell
 wget -N --no-check-certificate https://raw.githubusercontents.com/Misaka-blog/MisakaLinuxToolbox/master/MisakaToolbox.sh && bash MisakaToolbox.sh
 ```
-~~国内特供版：(部分功能**无法使用**)~~（已经失效）
-```shell
-wget -N --no-check-certificate https://gitee.com/Misaka-blog/MisakaLinuxToolbox/raw/master/MisakaToolbox.sh && bash MisakaToolbox.sh
-```
-第一次运行以后，可用快捷方式 
+
+第一次运行以后，可用快捷方式启动
 ```bash
 bash MisakaToolbox.sh
 ```
-启动
 
 ## 工具箱功能提议
 
@@ -31,11 +29,13 @@ bash MisakaToolbox.sh
 
 ## 来自姐姐大人的更新日志
 
-Ver 2.1.9 新增Misaka魔改版X-ui脚本
+Ver 3.0 重构工具箱菜单、原功能不变
 
 <details>
     <summary>历史更新记录（点击展开）</summary>
     
+Ver 2.1.9 新增Misaka魔改版X-ui脚本
+
 Ver 2.1.8 新增设置中文语言选项和一键换源脚本
     
 Ver 2.1.7 WARP处新增Misaka-WARP脚本
