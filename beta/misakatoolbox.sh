@@ -1,7 +1,7 @@
 #!/bin/bash
 
 version="v3.0"
-version_log="重构工具箱菜单、原功能不变"
+version_log="重构工具箱脚本菜单、原功能不变"
 
 RED="\033[31m"
 GREEN="\033[32m"
