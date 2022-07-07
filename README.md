@@ -14,9 +14,6 @@
 ```shell
 <<<<<<< HEAD
 wget -N --no-check-certificate https://raw.githubusercontent.com/misaka-gh/MisakaLinuxToolbox/master/MisakaToolbox.sh && bash MisakaToolbox.sh
-=======
-wget -N --no-check-certificate https://raw.githubusercontents.com/misaka-gh/MisakaLinuxToolbox/master/MisakaToolbox.sh && bash MisakaToolbox.sh
->>>>>>> 1e9d7df7e8900c14cf10ee9dc34d6d5e777f7bf4
 ```
 
 第一次运行以后，可用快捷方式启动
