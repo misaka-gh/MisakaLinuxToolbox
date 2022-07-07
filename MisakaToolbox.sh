@@ -333,6 +333,7 @@ menu(){
         3) menu3 ;;
         4) menu4 ;;
         5) menu5 ;;
+		9) wget -N https://raw.githubusercontent.com/misaka-gh/MisakaLinuxToolbox/master/MisakaToolbox.sh && ./ MisakaToolbox.sh
         *) exit 1 ;;
     esac
 }
@@ -369,8 +370,8 @@ menu1(){
     read -rp " 请输入选项 [0-13]:" menuInput
     case $menuInput in
         1) open_ports ;;
-        2) wget -N --no-check-certificate https://raw.githubusercontent.com/Misaka-blog/rootLogin/master/root.sh && bash root.sh ;;
-        3) wget -N --no-check-certificate https://raw.githubusercontent.com/Misaka-blog/screenManager/master/screen.sh && bash screen.sh ;;
+        2) wget -N --no-check-certificate https://raw.githubusercontent.com/misaka-gh/rootLogin/master/root.sh && bash root.sh ;;
+        3) wget -N --no-check-certificate https://raw.githubusercontent.com/misaka-gh/screenManager/master/screen.sh && bash screen.sh ;;
         4) bbr_script ;;
         5) v6_dns64 ;;
         6) warp_script ;;
