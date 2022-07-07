@@ -12,7 +12,6 @@
 2. 用SSH客户端连接上VPS，输入以下命令（若不是root用户请先`sudo -i`提权）
 
 ```shell
-<<<<<<< HEAD
 wget -N --no-check-certificate https://raw.githubusercontent.com/misaka-gh/MisakaLinuxToolbox/master/MisakaToolbox.sh && bash MisakaToolbox.sh
 ```
 
