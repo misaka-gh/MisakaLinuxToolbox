@@ -14,7 +14,7 @@
 ```shell
 wget -N --no-check-certificate https://raw.githubusercontent.com/misaka-gh/MisakaLinuxToolbox/master/MisakaToolbox.sh && bash MisakaToolbox.sh
 ```
-
+如有完成的不好的地方，请提lssues
 第一次运行以后，可用快捷方式启动
 ```bash
 bash MisakaToolbox.sh
