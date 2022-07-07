@@ -333,7 +333,7 @@ menu(){
         3) menu3 ;;
         4) menu4 ;;
         5) menu5 ;;
-		9) wget -N https://raw.githubusercontent.com/misaka-gh/MisakaLinuxToolbox/master/MisakaToolbox.sh && ./ MisakaToolbox.sh ;;
+		9) wget -N https://raw.githubusercontent.com/misaka-gh/MisakaLinuxToolbox/master/MisakaToolbox.sh && ./MisakaToolbox.sh ;;
         *) exit 1 ;;
     esac
 }
