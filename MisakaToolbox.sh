@@ -374,9 +374,9 @@ menu1(){
         5) v6_dns64 ;;
         6) warp_script ;;
         7) curl -fsSL https://get.docker.com | bash -s docker --mirror Aliyun ;;
-        8) wget -N --no-check-certificate https://raw.githubusercontent.com/Misaka-blog/acme-1key/master/acme1key.sh && bash acme1key.sh ;;
-        9) wget -N --no-check-certificate https://raw.githubusercontent.com/Misaka-blog/argo-tunnel-script/master/argo.sh && bash argo.sh ;;
-        10) wget -N --no-check-certificate https://raw.githubusercontent.com/Misaka-blog/Ngrok-1key/master/ngrok.sh && bash ngrok.sh ;;
+        8) wget -N --no-check-certificate https://raw.githubusercontent.com/misaka-gh/acme-1key/master/acme1key.sh && bash acme1key.sh ;;
+        9) wget -N --no-check-certificate https://raw.githubusercontent.com/misaka-gh/argo-tunnel-script/master/argo.sh && bash argo.sh ;;
+        10) wget -N --no-check-certificate https://raw.githubusercontent.com/misaka-gh/Ngrok-1key/master/ngrok.sh && bash ngrok.sh ;;
         11) bash <(curl -sSL https://cdn.jsdelivr.net/gh/SuperManito/LinuxMirrors@main/ChangeMirrors.sh) ;;
         12) setChinese ;;
         13) wget -N --no-check-certificate https://raw.githubusercontent.com/Misaka-blog/tun-script/master/tun.sh && bash tun.sh ;;
