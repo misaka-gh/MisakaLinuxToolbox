@@ -161,7 +161,7 @@ bbr_script(){
         wget -N --no-check-certificate "https://raw.githubusercontent.com/chiakge/Linux-NetSpeed/master/tcp.sh" && chmod +x tcp.sh && ./tcp.sh
     elif [[ ${virt} == "openvz" ]]; then
         if [[ ! $TUN =~ 'in bad state' ]] && [[ ! $TUN =~ '处于错误状态' ]] && [[ ! $TUN =~ 'Die Dateizugriffsnummer ist in schlechter Verfassung' ]]; then
-            wget -N --no-check-certificate https://raw.githubusercontent.com/Misaka-blog/tun-script/master/tun.sh && bash tun.sh
+            wget -N --no-check-certificate https://raw.githubusercontent.com/misaka-gh/tun-script/master/tun.sh && bash tun.sh
         else
             wget -N --no-check-certificate https://raw.githubusercontent.com/mzz2017/lkl-haproxy/master/lkl-haproxy.sh && bash lkl-haproxy.sh
         fi
@@ -238,14 +238,12 @@ xui() {
     echo "                            "
     green "请选择你接下来使用的X-ui面板版本"
     echo "1. 使用X-ui官方原版"
-    echo "2. 使用Misaka魔改版"
-    echo "3. 使用FranzKafkaYu魔改版"
+    echo "2. 使用FranzKafkaYu魔改版"
     echo "0. 返回主菜单"
     read -rp "请输入选项:" xuiNumberInput
     case "$xuiNumberInput" in
         1) bash <(curl -Ls https://raw.githubusercontent.com/vaxilu/x-ui/master/install.sh) ;;
-        2) wget -N --no-check-certificate https://raw.githubusercontent.com/Misaka-blog/x-ui/master/install.sh && bash install.sh ;;
-        3) bash <(curl -Ls https://raw.githubusercontent.com/FranzKafkaYu/x-ui/master/install.sh) ;;
+        2) bash <(curl -Ls https://raw.githubusercontent.com/FranzKafkaYu/x-ui/master/install.sh) ;;
         0) menu ;;
     esac
 }
