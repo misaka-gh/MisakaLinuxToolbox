@@ -379,7 +379,7 @@ menu1(){
         10) wget -N --no-check-certificate https://raw.githubusercontent.com/misaka-gh/Ngrok-1key/master/ngrok.sh && bash ngrok.sh ;;
         11) bash <(curl -sSL https://cdn.jsdelivr.net/gh/SuperManito/LinuxMirrors@main/ChangeMirrors.sh) ;;
         12) setChinese ;;
-        13) wget -N --no-check-certificate https://raw.githubusercontent.com/Misaka-blog/tun-script/master/tun.sh && bash tun.sh ;;
+        13) wget -N --no-check-certificate https://raw.githubusercontent.com/misaka-gh/tun-script/master/tun.sh && bash tun.sh ;;
         *) exit 1 ;;
     esac
 }
