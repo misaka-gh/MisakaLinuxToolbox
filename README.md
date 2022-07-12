@@ -23,8 +23,8 @@ bash MisakaToolbox.sh
 ## 工具箱功能提议
 
 想要工具箱添加新的功能？有以下两种方式可以选择：
-1. 自行修改代码后提交 [Pull Request](https://github.com/Misaka-blog/MisakaLinuxToolbox/pulls)
-2. 提交一个 [Discussion](https://github.com/Misaka-blog/MisakaLinuxToolbox/discussions/20)  
+1. 自行修改代码后提交 [Pull Request](https://github.com/misaka-gh/MisakaLinuxToolbox/pulls)
+2. 提交一个 [Discussion](https://github.com/misaka-gh/MisakaLinuxToolbox/discussions/20)  
 开发者们看到后会尽快添加~
 
 ## 来自姐姐大人的更新日志
@@ -161,13 +161,13 @@ GitLab：https://gitlab.com/misakano7545/MisakaLinuxToolbox
 BitBucket：https://bitbucket.org/misakano7545/misakalinuxtoolbox/
 ## Stars 增长记录
 
-[![Stargazers over time](https://starchart.cc/Misaka-blog/MisakaLinuxToolbox.svg)](https://starchart.cc/Misaka-blog/MisakaLinuxToolbox)
+[![Stargazers over time](https://starchart.cc/misaka-gh/MisakaLinuxToolbox.svg)](https://starchart.cc/Misaka-blog/MisakaLinuxToolbox)
 
 ## Repo 统计
 ![Alt](https://repobeats.axiom.co/api/embed/2512c745cf3ee94ad15c8e8ada474469e081f1c4.svg "Repobeats analytics image")
 
 ## 贡献者
-<a href="https://github.com/Misaka-blog/MisakaLinuxToolbox/graphs/contributors">
+<a href="https://github.com/misaka-gh/MisakaLinuxToolbox/graphs/contributors">
   <img src="https://contrib.rocks/image?repo=Misaka-blog/MisakaLinuxToolbox" />
 </a>
 
