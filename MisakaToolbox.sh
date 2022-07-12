@@ -448,7 +448,7 @@ menu3(){
         2) wget -N --no-check-certificate -q -O install.sh "https://raw.githubusercontent.com/wulabing/V2Ray_ws-tls_bash_onekey/master/install.sh" && chmod +x install.sh && bash install.sh ;;
         3) wget -N --no-check-certificate -q -O install.sh "https://raw.githubusercontent.com/wulabing/Xray_onekey/nginx_forward/install.sh" && chmod +x install.sh && bash install.sh ;;
         4) wget -N --no-check-certificate -q -O install.sh "https://raw.githubusercontent.com/wulabing/Xray_onekey/main/install.sh" && chmod +x install.sh && bash install.sh ;;
-        5) wget -N --no-check-certificate https://raw.githubusercontent.com/Misaka-blog/Xray-script/master/xray.sh && bash xray.sh ;;
+        5) wget -N --no-check-certificate https://raw.githubusercontent.com/misaka-gh/Xray-script/master/xray.sh && bash xray.sh ;;
         6) wget --no-check-certificate -O shadowsocks-all.sh https://raw.githubusercontent.com/teddysun/shadowsocks_install/master/shadowsocks-all.sh && chmod +x shadowsocks-all.sh && ./shadowsocks-all.sh 2>&1 | tee shadowsocks-all.log ;;
         7) mkdir /home/mtproxy && cd /home/mtproxy && curl -s -o mtproxy.sh https://raw.githubusercontent.com/sunpma/mtp/master/mtproxy.sh && chmod +x mtproxy.sh && bash mtproxy.sh && bash mtproxy.sh start ;;
         0) menu ;;
@@ -481,7 +481,7 @@ menu4(){
     echo ""
     read -rp " 请输入选项 [0-7]:" menuInput
     case $menuInput in
-        1) bash <(curl -Lso- https://cdn.jsdelivr.net/gh/Misaka-blog/misakabench@master/misakabench.sh) ;;
+        1) bash <(curl -Lso- https://cdn.jsdelivr.net/gh/misaka-gh/misakabench@master/misakabench.sh) ;;
         2) wget -qO- bench.sh | bash ;;
         3) wget -qO- --no-check-certificate https://raw.githubusercontent.com/oooldking/script/master/superbench.sh | bash ;;
         4) curl -fsL https://ilemonra.in/LemonBenchIntl | bash -s fast ;;
